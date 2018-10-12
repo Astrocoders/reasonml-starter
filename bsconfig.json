@@ -1,0 +1,33 @@
+{
+  "name": "reason-scripts",
+  "sources": [
+    {
+      "dir": "src",
+      "subdirs": [
+        "pages",
+        "components"
+      ]
+    }
+  ],
+  "bs-dependencies": [
+    "reason-react",
+    "bs-css",
+    "bs-reform",
+    "bs-jest",
+    "bs-material-ui",
+    "bs-material-ui-icons"
+  ],
+  "reason": {
+    "react-jsx": 2
+  },
+  "package-specs": {
+    "module": "es6",
+    "in-source": true
+  },
+  "suffix": ".bs.js",
+  "bsc-flags": ["-bs-super-errors"],
+  "warnings": {
+    "error": "+8"
+  },
+  "refmt": 3
+}

@@ -1,0 +1,2412 @@
+patch-package
+--- c/node_modules/bs-material-ui/src/MaterialUI.re
++++ i/node_modules/bs-material-ui/src/MaterialUI.re
+@@ -1,4 +1,6 @@
+-external toJsUnsafe : 'a => 'b = "%identity";
++external toJsUnsafe: 'a => 'b = "%identity";
++
++type callback('a) = 'a => unit;
+ 
+ let unwrapValue =
+   fun
+@@ -14,20 +16,20 @@ let unwrapValue =
+   | `FloatArray((fa: array(float))) => toJsUnsafe(fa)
+   | `ObjectGeneric(og) => toJsUnsafe(og)
+   | `ArrayGeneric(ag) => toJsUnsafe(ag)
+-  | `Object(_) => assert false
+-  | `Enum(_) => assert false
+-  | `EnumArray(_) => assert false;
++  | `Object(_) => assert(false)
++  | `Enum(_) => assert(false)
++  | `EnumArray(_) => assert(false);
+ 
+ module Colors = {
+   module Common = {
+     [@bs.module "material-ui/colors/common"]
+-    external commonExt : Js.Dict.t(string) = "default";
++    external commonExt: Js.Dict.t(string) = "default";
+     let black: string = Js.Dict.unsafeGet(commonExt, "black");
+     let white: string = Js.Dict.unsafeGet(commonExt, "white");
+   };
+   module Red = {
+     [@bs.module "material-ui/colors/red"]
+-    external redExt : Js.Dict.t(string) = "default";
++    external redExt: Js.Dict.t(string) = "default";
+     let c50: string = Js.Dict.unsafeGet(redExt, "50");
+     let c100: string = Js.Dict.unsafeGet(redExt, "100");
+     let c200: string = Js.Dict.unsafeGet(redExt, "200");
+@@ -45,7 +47,7 @@ module Colors = {
+   };
+   module Pink = {
+     [@bs.module "material-ui/colors/pink"]
+-    external pinkExt : Js.Dict.t(string) = "default";
++    external pinkExt: Js.Dict.t(string) = "default";
+     let c50: string = Js.Dict.unsafeGet(pinkExt, "50");
+     let c100: string = Js.Dict.unsafeGet(pinkExt, "100");
+     let c200: string = Js.Dict.unsafeGet(pinkExt, "200");
+@@ -63,7 +65,7 @@ module Colors = {
+   };
+   module Purple = {
+     [@bs.module "material-ui/colors/purple"]
+-    external purpleExt : Js.Dict.t(string) = "default";
++    external purpleExt: Js.Dict.t(string) = "default";
+     let c50: string = Js.Dict.unsafeGet(purpleExt, "50");
+     let c100: string = Js.Dict.unsafeGet(purpleExt, "100");
+     let c200: string = Js.Dict.unsafeGet(purpleExt, "200");
+@@ -81,7 +83,7 @@ module Colors = {
+   };
+   module DeepPurple = {
+     [@bs.module "material-ui/colors/deepPurple"]
+-    external deepPurpleExt : Js.Dict.t(string) = "default";
++    external deepPurpleExt: Js.Dict.t(string) = "default";
+     let c50: string = Js.Dict.unsafeGet(deepPurpleExt, "50");
+     let c100: string = Js.Dict.unsafeGet(deepPurpleExt, "100");
+     let c200: string = Js.Dict.unsafeGet(deepPurpleExt, "200");
+@@ -99,7 +101,7 @@ module Colors = {
+   };
+   module Indigo = {
+     [@bs.module "material-ui/colors/indigo"]
+-    external indigoExt : Js.Dict.t(string) = "default";
++    external indigoExt: Js.Dict.t(string) = "default";
+     let c50: string = Js.Dict.unsafeGet(indigoExt, "50");
+     let c100: string = Js.Dict.unsafeGet(indigoExt, "100");
+     let c200: string = Js.Dict.unsafeGet(indigoExt, "200");
+@@ -117,7 +119,7 @@ module Colors = {
+   };
+   module Blue = {
+     [@bs.module "material-ui/colors/blue"]
+-    external blueExt : Js.Dict.t(string) = "default";
++    external blueExt: Js.Dict.t(string) = "default";
+     let c50: string = Js.Dict.unsafeGet(blueExt, "50");
+     let c100: string = Js.Dict.unsafeGet(blueExt, "100");
+     let c200: string = Js.Dict.unsafeGet(blueExt, "200");
+@@ -135,7 +137,7 @@ module Colors = {
+   };
+   module LightBlue = {
+     [@bs.module "material-ui/colors/lightBlue"]
+-    external lightBlueExt : Js.Dict.t(string) = "default";
++    external lightBlueExt: Js.Dict.t(string) = "default";
+     let c50: string = Js.Dict.unsafeGet(lightBlueExt, "50");
+     let c100: string = Js.Dict.unsafeGet(lightBlueExt, "100");
+     let c200: string = Js.Dict.unsafeGet(lightBlueExt, "200");
+@@ -153,7 +155,7 @@ module Colors = {
+   };
+   module Cyan = {
+     [@bs.module "material-ui/colors/cyan"]
+-    external cyanExt : Js.Dict.t(string) = "default";
++    external cyanExt: Js.Dict.t(string) = "default";
+     let c50: string = Js.Dict.unsafeGet(cyanExt, "50");
+     let c100: string = Js.Dict.unsafeGet(cyanExt, "100");
+     let c200: string = Js.Dict.unsafeGet(cyanExt, "200");
+@@ -171,7 +173,7 @@ module Colors = {
+   };
+   module Teal = {
+     [@bs.module "material-ui/colors/teal"]
+-    external tealExt : Js.Dict.t(string) = "default";
++    external tealExt: Js.Dict.t(string) = "default";
+     let c50: string = Js.Dict.unsafeGet(tealExt, "50");
+     let c100: string = Js.Dict.unsafeGet(tealExt, "100");
+     let c200: string = Js.Dict.unsafeGet(tealExt, "200");
+@@ -189,7 +191,7 @@ module Colors = {
+   };
+   module Green = {
+     [@bs.module "material-ui/colors/green"]
+-    external greenExt : Js.Dict.t(string) = "default";
++    external greenExt: Js.Dict.t(string) = "default";
+     let c50: string = Js.Dict.unsafeGet(greenExt, "50");
+     let c100: string = Js.Dict.unsafeGet(greenExt, "100");
+     let c200: string = Js.Dict.unsafeGet(greenExt, "200");
+@@ -207,7 +209,7 @@ module Colors = {
+   };
+   module LightGreen = {
+     [@bs.module "material-ui/colors/lightGreen"]
+-    external lightGreenExt : Js.Dict.t(string) = "default";
++    external lightGreenExt: Js.Dict.t(string) = "default";
+     let c50: string = Js.Dict.unsafeGet(lightGreenExt, "50");
+     let c100: string = Js.Dict.unsafeGet(lightGreenExt, "100");
+     let c200: string = Js.Dict.unsafeGet(lightGreenExt, "200");
+@@ -225,7 +227,7 @@ module Colors = {
+   };
+   module Lime = {
+     [@bs.module "material-ui/colors/lime"]
+-    external limeExt : Js.Dict.t(string) = "default";
++    external limeExt: Js.Dict.t(string) = "default";
+     let c50: string = Js.Dict.unsafeGet(limeExt, "50");
+     let c100: string = Js.Dict.unsafeGet(limeExt, "100");
+     let c200: string = Js.Dict.unsafeGet(limeExt, "200");
+@@ -243,7 +245,7 @@ module Colors = {
+   };
+   module Yellow = {
+     [@bs.module "material-ui/colors/yellow"]
+-    external yellowExt : Js.Dict.t(string) = "default";
++    external yellowExt: Js.Dict.t(string) = "default";
+     let c50: string = Js.Dict.unsafeGet(yellowExt, "50");
+     let c100: string = Js.Dict.unsafeGet(yellowExt, "100");
+     let c200: string = Js.Dict.unsafeGet(yellowExt, "200");
+@@ -261,7 +263,7 @@ module Colors = {
+   };
+   module Amber = {
+     [@bs.module "material-ui/colors/amber"]
+-    external amberExt : Js.Dict.t(string) = "default";
++    external amberExt: Js.Dict.t(string) = "default";
+     let c50: string = Js.Dict.unsafeGet(amberExt, "50");
+     let c100: string = Js.Dict.unsafeGet(amberExt, "100");
+     let c200: string = Js.Dict.unsafeGet(amberExt, "200");
+@@ -279,7 +281,7 @@ module Colors = {
+   };
+   module Orange = {
+     [@bs.module "material-ui/colors/orange"]
+-    external orangeExt : Js.Dict.t(string) = "default";
++    external orangeExt: Js.Dict.t(string) = "default";
+     let c50: string = Js.Dict.unsafeGet(orangeExt, "50");
+     let c100: string = Js.Dict.unsafeGet(orangeExt, "100");
+     let c200: string = Js.Dict.unsafeGet(orangeExt, "200");
+@@ -297,7 +299,7 @@ module Colors = {
+   };
+   module DeepOrange = {
+     [@bs.module "material-ui/colors/deepOrange"]
+-    external deepOrangeExt : Js.Dict.t(string) = "default";
++    external deepOrangeExt: Js.Dict.t(string) = "default";
+     let c50: string = Js.Dict.unsafeGet(deepOrangeExt, "50");
+     let c100: string = Js.Dict.unsafeGet(deepOrangeExt, "100");
+     let c200: string = Js.Dict.unsafeGet(deepOrangeExt, "200");
+@@ -315,7 +317,7 @@ module Colors = {
+   };
+   module Brown = {
+     [@bs.module "material-ui/colors/brown"]
+-    external brownExt : Js.Dict.t(string) = "default";
++    external brownExt: Js.Dict.t(string) = "default";
+     let c50: string = Js.Dict.unsafeGet(brownExt, "50");
+     let c100: string = Js.Dict.unsafeGet(brownExt, "100");
+     let c200: string = Js.Dict.unsafeGet(brownExt, "200");
+@@ -333,7 +335,7 @@ module Colors = {
+   };
+   module Grey = {
+     [@bs.module "material-ui/colors/grey"]
+-    external greyExt : Js.Dict.t(string) = "default";
++    external greyExt: Js.Dict.t(string) = "default";
+     let c50: string = Js.Dict.unsafeGet(greyExt, "50");
+     let c100: string = Js.Dict.unsafeGet(greyExt, "100");
+     let c200: string = Js.Dict.unsafeGet(greyExt, "200");
+@@ -351,7 +353,7 @@ module Colors = {
+   };
+   module BlueGrey = {
+     [@bs.module "material-ui/colors/blueGrey"]
+-    external blueGreyExt : Js.Dict.t(string) = "default";
++    external blueGreyExt: Js.Dict.t(string) = "default";
+     let c50: string = Js.Dict.unsafeGet(blueGreyExt, "50");
+     let c100: string = Js.Dict.unsafeGet(blueGreyExt, "100");
+     let c200: string = Js.Dict.unsafeGet(blueGreyExt, "200");
+@@ -427,9 +429,9 @@ module AppBar = {
+          );
+   };
+   [@bs.module "material-ui/AppBar/AppBar"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~className: string=?,
+       ~color: string=?,
+@@ -503,9 +505,9 @@ module Avatar = {
+          );
+   };
+   [@bs.module "material-ui/Avatar/Avatar"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~alt: string=?,
+       ~childrenClassName: string=?,
+@@ -587,9 +589,9 @@ module Backdrop = {
+          );
+   };
+   [@bs.module "material-ui/Modal/Backdrop"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~className: string=?,
+       ~invisible: bool=?,
+@@ -685,9 +687,9 @@ module Badge = {
+          );
+   };
+   [@bs.module "material-ui/Badge/Badge"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~badgeContent: ReasonReact.reactElement,
+       ~className: string=?,
+@@ -767,15 +769,15 @@ module BottomNavigationAction = {
+          );
+   };
+   [@bs.module "material-ui/BottomNavigation/BottomNavigationAction"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~className: string=?,
+       ~icon: ReasonReact.reactElement=?,
+       ~label: ReasonReact.reactElement=?,
+-      ~onChange: ReasonReact.Callback.t(ReactEventRe.Form.t)=?,
+-      ~onClick: ReasonReact.Callback.t(ReactEventRe.Mouse.t)=?,
++      ~onChange: ReactEvent.Form.t => unit=?,
++      ~onClick: ReactEvent.Mouse.t => unit=?,
+       ~selected: bool=?,
+       ~showLabel: bool=?,
+       ~value: 'any_8=?,
+@@ -785,17 +787,17 @@ module BottomNavigationAction = {
+       ~disabled: bool=?,
+       ~disableRipple: bool=?,
+       ~focusRipple: bool=?,
+-      ~onBlur: ReasonReact.Callback.t(ReactEventRe.Focus.t)=?,
+-      ~onFocus: ReasonReact.Callback.t(ReactEventRe.Focus.t)=?,
+-      ~onKeyboardFocus: ReasonReact.Callback.t(ReactEventRe.Focus.t)=?,
+-      ~onKeyDown: ReasonReact.Callback.t(ReactEventRe.Keyboard.t)=?,
+-      ~onKeyUp: ReasonReact.Callback.t(ReactEventRe.Keyboard.t)=?,
+-      ~onMouseDown: ReasonReact.Callback.t(ReactEventRe.Mouse.t)=?,
+-      ~onMouseLeave: ReasonReact.Callback.t(ReactEventRe.Mouse.t)=?,
+-      ~onMouseUp: ReasonReact.Callback.t(ReactEventRe.Mouse.t)=?,
+-      ~onTouchEnd: ReasonReact.Callback.t(ReactEventRe.Touch.t)=?,
+-      ~onTouchMove: ReasonReact.Callback.t(ReactEventRe.Touch.t)=?,
+-      ~onTouchStart: ReasonReact.Callback.t(ReactEventRe.Touch.t)=?,
++      ~onBlur: (ReactEvent.Form.t => unit)=?,
++      ~onFocus: callback(ReactEvent.Form.t)=?,
++      ~onKeyboardFocus: callback(ReactEvent.Form.t)=?,
++      ~onKeyDown: callback(ReactEvent.Keyboard.t)=?,
++      ~onKeyUp: callback(ReactEvent.Keyboard.t)=?,
++      ~onMouseDown: callback(ReactEvent.Mouse.t)=?,
++      ~onMouseLeave: callback(ReactEvent.Mouse.t)=?,
++      ~onMouseUp: callback(ReactEvent.Mouse.t)=?,
++      ~onTouchEnd: callback(ReactEvent.Touch.t)=?,
++      ~onTouchMove: callback(ReactEvent.Touch.t)=?,
++      ~onTouchStart: callback(ReactEvent.Touch.t)=?,
+       ~role: string=?,
+       ~tabIndex: 'union_o=?,
+       ~_TouchRippleProps: Js.t({..})=?,
+@@ -811,8 +813,8 @@ module BottomNavigationAction = {
+         ~className: option(string)=?,
+         ~icon: option(ReasonReact.reactElement)=?,
+         ~label: option(ReasonReact.reactElement)=?,
+-        ~onChange: option(ReasonReact.Callback.t(ReactEventRe.Form.t))=?,
+-        ~onClick: option(ReasonReact.Callback.t(ReactEventRe.Mouse.t))=?,
++        ~onChange: option(callback(ReactEvent.Form.t))=?,
++        ~onClick: option(callback(ReactEvent.Mouse.t))=?,
+         ~selected: option(bool)=?,
+         ~showLabel: option(bool)=?,
+         ~value: option('any_8)=?,
+@@ -823,18 +825,18 @@ module BottomNavigationAction = {
+         ~disabled: option(bool)=?,
+         ~disableRipple: option(bool)=?,
+         ~focusRipple: option(bool)=?,
+-        ~onBlur: option(ReasonReact.Callback.t(ReactEventRe.Focus.t))=?,
+-        ~onFocus: option(ReasonReact.Callback.t(ReactEventRe.Focus.t))=?,
++        ~onBlur: option(callback(ReactEvent.Form.t))=?,
++        ~onFocus: option(callback(ReactEvent.Form.t))=?,
+         ~onKeyboardFocus:
+-           option(ReasonReact.Callback.t(ReactEventRe.Focus.t))=?,
+-        ~onKeyDown: option(ReasonReact.Callback.t(ReactEventRe.Keyboard.t))=?,
+-        ~onKeyUp: option(ReasonReact.Callback.t(ReactEventRe.Keyboard.t))=?,
+-        ~onMouseDown: option(ReasonReact.Callback.t(ReactEventRe.Mouse.t))=?,
+-        ~onMouseLeave: option(ReasonReact.Callback.t(ReactEventRe.Mouse.t))=?,
+-        ~onMouseUp: option(ReasonReact.Callback.t(ReactEventRe.Mouse.t))=?,
+-        ~onTouchEnd: option(ReasonReact.Callback.t(ReactEventRe.Touch.t))=?,
+-        ~onTouchMove: option(ReasonReact.Callback.t(ReactEventRe.Touch.t))=?,
+-        ~onTouchStart: option(ReasonReact.Callback.t(ReactEventRe.Touch.t))=?,
++           option(callback(ReactEvent.Form.t))=?,
++        ~onKeyDown: option(callback(ReactEvent.Keyboard.t))=?,
++        ~onKeyUp: option(callback(ReactEvent.Keyboard.t))=?,
++        ~onMouseDown: option(callback(ReactEvent.Mouse.t))=?,
++        ~onMouseLeave: option(callback(ReactEvent.Mouse.t))=?,
++        ~onMouseUp: option(callback(ReactEvent.Mouse.t))=?,
++        ~onTouchEnd: option(callback(ReactEvent.Touch.t))=?,
++        ~onTouchMove: option(callback(ReactEvent.Touch.t))=?,
++        ~onTouchStart: option(callback(ReactEvent.Touch.t))=?,
+         ~role: option(string)=?,
+         ~tabIndex: option([ | `Int(int) | `Float(float) | `String(string)])=?,
+         ~_TouchRippleProps: option(Js.t({..}))=?,
+@@ -907,12 +909,12 @@ module BottomNavigation = {
+          );
+   };
+   [@bs.module "material-ui/BottomNavigation/BottomNavigation"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~className: string=?,
+-      ~onChange: ReasonReact.Callback.t(ReactEventRe.Form.t)=?,
++      ~onChange: callback(ReactEvent.Form.t)=?,
+       ~showLabels: bool=?,
+       ~value: 'any_u=?,
+       ~classes: Js.Dict.t(string)=?,
+@@ -924,7 +926,7 @@ module BottomNavigation = {
+   let make =
+       (
+         ~className: option(string)=?,
+-        ~onChange: option(ReasonReact.Callback.t(ReactEventRe.Form.t))=?,
++        ~onChange: option(callback(ReactEvent.Form.t))=?,
+         ~showLabels: option(bool)=?,
+         ~value: option('any_u)=?,
+         ~classes: option(Classes.t)=?,
+@@ -976,9 +978,9 @@ module ButtonBase = {
+          );
+   };
+   [@bs.module "material-ui/ButtonBase/ButtonBase"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~buttonRef: ReasonReact.reactElement=?,
+       ~centerRipple: bool=?,
+@@ -987,18 +989,18 @@ module ButtonBase = {
+       ~disabled: bool=?,
+       ~disableRipple: bool=?,
+       ~focusRipple: bool=?,
+-      ~onBlur: ReasonReact.Callback.t(ReactEventRe.Focus.t)=?,
+-      ~onClick: ReasonReact.Callback.t(ReactEventRe.Mouse.t)=?,
+-      ~onFocus: ReasonReact.Callback.t(ReactEventRe.Focus.t)=?,
+-      ~onKeyboardFocus: ReasonReact.Callback.t(ReactEventRe.Focus.t)=?,
+-      ~onKeyDown: ReasonReact.Callback.t(ReactEventRe.Keyboard.t)=?,
+-      ~onKeyUp: ReasonReact.Callback.t(ReactEventRe.Keyboard.t)=?,
+-      ~onMouseDown: ReasonReact.Callback.t(ReactEventRe.Mouse.t)=?,
+-      ~onMouseLeave: ReasonReact.Callback.t(ReactEventRe.Mouse.t)=?,
+-      ~onMouseUp: ReasonReact.Callback.t(ReactEventRe.Mouse.t)=?,
+-      ~onTouchEnd: ReasonReact.Callback.t(ReactEventRe.Touch.t)=?,
+-      ~onTouchMove: ReasonReact.Callback.t(ReactEventRe.Touch.t)=?,
+-      ~onTouchStart: ReasonReact.Callback.t(ReactEventRe.Touch.t)=?,
++      ~onBlur: callback(ReactEvent.Form.t)=?,
++      ~onClick: callback(ReactEvent.Mouse.t)=?,
++      ~onFocus: callback(ReactEvent.Form.t)=?,
++      ~onKeyboardFocus: callback(ReactEvent.Form.t)=?,
++      ~onKeyDown: callback(ReactEvent.Keyboard.t)=?,
++      ~onKeyUp: callback(ReactEvent.Keyboard.t)=?,
++      ~onMouseDown: callback(ReactEvent.Mouse.t)=?,
++      ~onMouseLeave: callback(ReactEvent.Mouse.t)=?,
++      ~onMouseUp: callback(ReactEvent.Mouse.t)=?,
++      ~onTouchEnd: callback(ReactEvent.Touch.t)=?,
++      ~onTouchMove: callback(ReactEvent.Touch.t)=?,
++      ~onTouchStart: callback(ReactEvent.Touch.t)=?,
+       ~role: string=?,
+       ~tabIndex: 'union_o=?,
+       ~_TouchRippleProps: Js.t({..})=?,
+@@ -1019,19 +1021,19 @@ module ButtonBase = {
+         ~disabled: option(bool)=?,
+         ~disableRipple: option(bool)=?,
+         ~focusRipple: option(bool)=?,
+-        ~onBlur: option(ReasonReact.Callback.t(ReactEventRe.Focus.t))=?,
+-        ~onClick: option(ReasonReact.Callback.t(ReactEventRe.Mouse.t))=?,
+-        ~onFocus: option(ReasonReact.Callback.t(ReactEventRe.Focus.t))=?,
++        ~onBlur: option(callback(ReactEvent.Form.t))=?,
++        ~onClick: option(callback(ReactEvent.Mouse.t))=?,
++        ~onFocus: option(callback(ReactEvent.Form.t))=?,
+         ~onKeyboardFocus:
+-           option(ReasonReact.Callback.t(ReactEventRe.Focus.t))=?,
+-        ~onKeyDown: option(ReasonReact.Callback.t(ReactEventRe.Keyboard.t))=?,
+-        ~onKeyUp: option(ReasonReact.Callback.t(ReactEventRe.Keyboard.t))=?,
+-        ~onMouseDown: option(ReasonReact.Callback.t(ReactEventRe.Mouse.t))=?,
+-        ~onMouseLeave: option(ReasonReact.Callback.t(ReactEventRe.Mouse.t))=?,
+-        ~onMouseUp: option(ReasonReact.Callback.t(ReactEventRe.Mouse.t))=?,
+-        ~onTouchEnd: option(ReasonReact.Callback.t(ReactEventRe.Touch.t))=?,
+-        ~onTouchMove: option(ReasonReact.Callback.t(ReactEventRe.Touch.t))=?,
+-        ~onTouchStart: option(ReasonReact.Callback.t(ReactEventRe.Touch.t))=?,
++           option(callback(ReactEvent.Form.t))=?,
++        ~onKeyDown: option(callback(ReactEvent.Keyboard.t))=?,
++        ~onKeyUp: option(callback(ReactEvent.Keyboard.t))=?,
++        ~onMouseDown: option(callback(ReactEvent.Mouse.t))=?,
++        ~onMouseLeave: option(callback(ReactEvent.Mouse.t))=?,
++        ~onMouseUp: option(callback(ReactEvent.Mouse.t))=?,
++        ~onTouchEnd: option(callback(ReactEvent.Touch.t))=?,
++        ~onTouchMove: option(callback(ReactEvent.Touch.t))=?,
++        ~onTouchStart: option(callback(ReactEvent.Touch.t))=?,
+         ~role: option(string)=?,
+         ~tabIndex: option([ | `Int(int) | `Float(float) | `String(string)])=?,
+         ~_TouchRippleProps: option(Js.t({..}))=?,
+@@ -1159,9 +1161,9 @@ module Button = {
+          );
+   };
+   [@bs.module "material-ui/Button/Button"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~className: string=?,
+       ~color: string=?,
+@@ -1178,18 +1180,18 @@ module Button = {
+       ~buttonRef: ReasonReact.reactElement=?,
+       ~centerRipple: bool=?,
+       ~focusRipple: bool=?,
+-      ~onBlur: ReasonReact.Callback.t(ReactEventRe.Focus.t)=?,
+-      ~onClick: ReasonReact.Callback.t(ReactEventRe.Mouse.t)=?,
+-      ~onFocus: ReasonReact.Callback.t(ReactEventRe.Focus.t)=?,
+-      ~onKeyboardFocus: ReasonReact.Callback.t(ReactEventRe.Focus.t)=?,
+-      ~onKeyDown: ReasonReact.Callback.t(ReactEventRe.Keyboard.t)=?,
+-      ~onKeyUp: ReasonReact.Callback.t(ReactEventRe.Keyboard.t)=?,
+-      ~onMouseDown: ReasonReact.Callback.t(ReactEventRe.Mouse.t)=?,
+-      ~onMouseLeave: ReasonReact.Callback.t(ReactEventRe.Mouse.t)=?,
+-      ~onMouseUp: ReasonReact.Callback.t(ReactEventRe.Mouse.t)=?,
+-      ~onTouchEnd: ReasonReact.Callback.t(ReactEventRe.Touch.t)=?,
+-      ~onTouchMove: ReasonReact.Callback.t(ReactEventRe.Touch.t)=?,
+-      ~onTouchStart: ReasonReact.Callback.t(ReactEventRe.Touch.t)=?,
++      ~onBlur: callback(ReactEvent.Form.t)=?,
++      ~onClick: callback(ReactEvent.Mouse.t)=?,
++      ~onFocus: callback(ReactEvent.Form.t)=?,
++      ~onKeyboardFocus: callback(ReactEvent.Form.t)=?,
++      ~onKeyDown: callback(ReactEvent.Keyboard.t)=?,
++      ~onKeyUp: callback(ReactEvent.Keyboard.t)=?,
++      ~onMouseDown: callback(ReactEvent.Mouse.t)=?,
++      ~onMouseLeave: callback(ReactEvent.Mouse.t)=?,
++      ~onMouseUp: callback(ReactEvent.Mouse.t)=?,
++      ~onTouchEnd: callback(ReactEvent.Touch.t)=?,
++      ~onTouchMove: callback(ReactEvent.Touch.t)=?,
++      ~onTouchStart: callback(ReactEvent.Touch.t)=?,
+       ~role: string=?,
+       ~tabIndex: 'union_o=?,
+       ~_TouchRippleProps: Js.t({..})=?,
+@@ -1217,19 +1219,19 @@ module Button = {
+         ~buttonRef: option(ReasonReact.reactElement)=?,
+         ~centerRipple: option(bool)=?,
+         ~focusRipple: option(bool)=?,
+-        ~onBlur: option(ReasonReact.Callback.t(ReactEventRe.Focus.t))=?,
+-        ~onClick: option(ReasonReact.Callback.t(ReactEventRe.Mouse.t))=?,
+-        ~onFocus: option(ReasonReact.Callback.t(ReactEventRe.Focus.t))=?,
++        ~onBlur: option(callback(ReactEvent.Form.t))=?,
++        ~onClick: option(callback(ReactEvent.Mouse.t))=?,
++        ~onFocus: option(callback(ReactEvent.Form.t))=?,
+         ~onKeyboardFocus:
+-           option(ReasonReact.Callback.t(ReactEventRe.Focus.t))=?,
+-        ~onKeyDown: option(ReasonReact.Callback.t(ReactEventRe.Keyboard.t))=?,
+-        ~onKeyUp: option(ReasonReact.Callback.t(ReactEventRe.Keyboard.t))=?,
+-        ~onMouseDown: option(ReasonReact.Callback.t(ReactEventRe.Mouse.t))=?,
+-        ~onMouseLeave: option(ReasonReact.Callback.t(ReactEventRe.Mouse.t))=?,
+-        ~onMouseUp: option(ReasonReact.Callback.t(ReactEventRe.Mouse.t))=?,
+-        ~onTouchEnd: option(ReasonReact.Callback.t(ReactEventRe.Touch.t))=?,
+-        ~onTouchMove: option(ReasonReact.Callback.t(ReactEventRe.Touch.t))=?,
+-        ~onTouchStart: option(ReasonReact.Callback.t(ReactEventRe.Touch.t))=?,
++           option(callback(ReactEvent.Form.t))=?,
++        ~onKeyDown: option(callback(ReactEvent.Keyboard.t))=?,
++        ~onKeyUp: option(callback(ReactEvent.Keyboard.t))=?,
++        ~onMouseDown: option(callback(ReactEvent.Mouse.t))=?,
++        ~onMouseLeave: option(callback(ReactEvent.Mouse.t))=?,
++        ~onMouseUp: option(callback(ReactEvent.Mouse.t))=?,
++        ~onTouchEnd: option(callback(ReactEvent.Touch.t))=?,
++        ~onTouchMove: option(callback(ReactEvent.Touch.t))=?,
++        ~onTouchStart: option(callback(ReactEvent.Touch.t))=?,
+         ~role: option(string)=?,
+         ~tabIndex: option([ | `Int(int) | `Float(float) | `String(string)])=?,
+         ~_TouchRippleProps: option(Js.t({..}))=?,
+@@ -1305,9 +1307,9 @@ module CardActions = {
+          );
+   };
+   [@bs.module "material-ui/Card/CardActions"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~className: string=?,
+       ~disableActionSpacing: bool=?,
+@@ -1362,9 +1364,9 @@ module CardContent = {
+          );
+   };
+   [@bs.module "material-ui/Card/CardContent"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~className: string=?,
+       ~component: 'union_1=?,
+@@ -1435,9 +1437,9 @@ module CardHeader = {
+          );
+   };
+   [@bs.module "material-ui/Card/CardHeader"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~action: ReasonReact.reactElement=?,
+       ~avatar: ReasonReact.reactElement=?,
+@@ -1508,9 +1510,9 @@ module CardMedia = {
+          );
+   };
+   [@bs.module "material-ui/Card/CardMedia"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~className: string=?,
+       ~component: 'union_q=?,
+@@ -1551,16 +1553,16 @@ module CardMedia = {
+ 
+ module Card = {
+   [@bs.module "material-ui/Card/Card"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~raised: bool=?,
+       ~className: string=?,
+       ~component: 'union_h=?,
+       ~elevation: 'number_j=?,
+       ~square: bool=?,
+-      ~onClick: ReasonReact.Callback.t(ReactEventRe.Mouse.t)=?,
++      ~onClick: callback(ReactEvent.Mouse.t)=?,
+       ~style: ReactDOMRe.style=?,
+       unit
+     ) =>
+@@ -1574,7 +1576,7 @@ module Card = {
+            option([ | `String(string) | `Element(ReasonReact.reactElement)])=?,
+         ~elevation: option([ | `Int(int) | `Float(float)])=?,
+         ~square: option(bool)=?,
+-        ~onClick: option(ReasonReact.Callback.t(ReactEventRe.Mouse.t))=?,
++        ~onClick: option(callback(ReactEvent.Mouse.t))=?,
+         ~style: option(ReactDOMRe.style)=?,
+         children,
+       ) =>
+@@ -1636,9 +1638,9 @@ module Checkbox = {
+          );
+   };
+   [@bs.module "material-ui/Checkbox/Checkbox"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~checked: 'union_o=?,
+       ~checkedIcon: ReasonReact.reactElement=?,
+@@ -1651,7 +1653,7 @@ module Checkbox = {
+       ~indeterminateIcon: ReasonReact.reactElement=?,
+       ~inputProps: Js.t({..})=?,
+       ~inputRef: ReasonReact.reactElement=?,
+-      ~onChange: (ReactEventRe.Selection.t, bool) => unit=?,
++      ~onChange: (ReactEvent.Selection.t, bool) => unit=?,
+       ~_type: string=?,
+       ~value: string=?,
+       ~classes: Js.Dict.t(string)=?,
+@@ -1673,7 +1675,7 @@ module Checkbox = {
+         ~indeterminateIcon: option(ReasonReact.reactElement)=?,
+         ~inputProps: option(Js.t({..}))=?,
+         ~inputRef: option(ReasonReact.reactElement)=?,
+-        ~onChange: option((ReactEventRe.Selection.t, bool) => unit)=?,
++        ~onChange: option((ReactEvent.Selection.t, bool) => unit)=?,
+         ~_type: option(string)=?,
+         ~value: option(string)=?,
+         ~classes: option(Classes.t)=?,
+@@ -1747,18 +1749,18 @@ module Chip = {
+          );
+   };
+   [@bs.module "material-ui/Chip/Chip"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~avatar: ReasonReact.reactElement=?,
+       ~className: string=?,
+       ~component: 'union_8=?,
+       ~deleteIcon: ReasonReact.reactElement=?,
+       ~label: ReasonReact.reactElement=?,
+-      ~onClick: ReasonReact.Callback.t(ReactEventRe.Mouse.t)=?,
++      ~onClick: callback(ReactEvent.Mouse.t)=?,
+       ~onDelete: unit => unit=?,
+-      ~onKeyDown: ReasonReact.Callback.t(ReactEventRe.Keyboard.t)=?,
++      ~onKeyDown: callback(ReactEvent.Keyboard.t)=?,
+       ~tabIndex: 'union_k=?,
+       ~classes: Js.Dict.t(string)=?,
+       ~style: ReactDOMRe.style=?,
+@@ -1774,9 +1776,9 @@ module Chip = {
+            option([ | `String(string) | `Element(ReasonReact.reactElement)])=?,
+         ~deleteIcon: option(ReasonReact.reactElement)=?,
+         ~label: option(ReasonReact.reactElement)=?,
+-        ~onClick: option(ReasonReact.Callback.t(ReactEventRe.Mouse.t))=?,
++        ~onClick: option(callback(ReactEvent.Mouse.t))=?,
+         ~onDelete: option(unit => unit)=?,
+-        ~onKeyDown: option(ReasonReact.Callback.t(ReactEventRe.Keyboard.t))=?,
++        ~onKeyDown: option(callback(ReactEvent.Keyboard.t))=?,
+         ~tabIndex: option([ | `Int(int) | `Float(float) | `String(string)])=?,
+         ~classes: option(Classes.t)=?,
+         ~style: option(ReactDOMRe.style)=?,
+@@ -1856,9 +1858,9 @@ module CircularProgress = {
+          );
+   };
+   [@bs.module "material-ui/Progress/CircularProgress"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~className: string=?,
+       ~color: string=?,
+@@ -1923,12 +1925,12 @@ module ClickAwayListener = {
+     | [@bs.as "0"] `False
+   ];
+   [@bs.module "material-ui/utils/ClickAwayListener"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~mouseEvent: string=?,
+-      ~onClickAway: ReasonReact.Callback.t(ReactEventRe.Mouse.t),
++      ~onClickAway: callback(ReactEvent.Mouse.t),
+       ~touchEvent: string=?,
+       ~style: ReactDOMRe.style=?,
+       unit
+@@ -1938,7 +1940,7 @@ module ClickAwayListener = {
+   let make =
+       (
+         ~mouseEvent: option(mouseEvent)=?,
+-        ~onClickAway: ReasonReact.Callback.t(ReactEventRe.Mouse.t),
++        ~onClickAway: callback(ReactEvent.Mouse.t),
+         ~touchEvent: option(touchEvent)=?,
+         ~style: option(ReactDOMRe.style)=?,
+         children,
+@@ -1998,9 +2000,9 @@ module Collapse = {
+          );
+   };
+   [@bs.module "material-ui/transitions/Collapse"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~className: string=?,
+       ~collapsedHeight: string=?,
+@@ -2079,7 +2081,7 @@ module Collapse = {
+ 
+ module CssBaseline = {
+   [@bs.module "material-ui/CssBaseline/CssBaseline"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   let make = children =>
+     ReasonReact.wrapJsForReason(~reactClass, ~props=Js.Obj.empty(), children);
+ };
+@@ -2110,9 +2112,9 @@ module DialogActions = {
+          );
+   };
+   [@bs.module "material-ui/Dialog/DialogActions"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~className: string=?,
+       ~disableActionSpacing: bool=?,
+@@ -2198,9 +2200,9 @@ module DialogContentText = {
+          );
+   };
+   [@bs.module "material-ui/Dialog/DialogContentText"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~className: string=?,
+       ~align: string=?,
+@@ -2277,9 +2279,9 @@ module DialogContent = {
+          );
+   };
+   [@bs.module "material-ui/Dialog/DialogContent"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~className: string=?,
+       ~classes: Js.Dict.t(string)=?,
+@@ -2331,9 +2333,9 @@ module DialogTitle = {
+          );
+   };
+   [@bs.module "material-ui/Dialog/DialogTitle"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~className: string=?,
+       ~disableTypography: bool=?,
+@@ -2418,9 +2420,9 @@ module Dialog = {
+          );
+   };
+   [@bs.module "material-ui/Dialog/Dialog"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~className: string=?,
+       ~disableBackdropClick: bool=?,
+@@ -2428,12 +2430,12 @@ module Dialog = {
+       ~fullScreen: bool=?,
+       ~fullWidth: bool=?,
+       ~maxWidth: string=?,
+-      ~onBackdropClick: ReasonReact.Callback.t(ReactEventRe.Mouse.t)=?,
++      ~onBackdropClick: callback(ReactEvent.Mouse.t)=?,
+       ~onClose: unit => unit=?,
+       ~onEnter: unit => unit=?,
+       ~onEntered: unit => unit=?,
+       ~onEntering: unit => unit=?,
+-      ~onEscapeKeyDown: ReasonReact.Callback.t(ReactEventRe.Keyboard.t)=?,
++      ~onEscapeKeyDown: callback(ReactEvent.Keyboard.t)=?,
+       ~onExit: unit => unit=?,
+       ~onExited: unit => unit=?,
+       ~onExiting: unit => unit=?,
+@@ -2466,13 +2468,13 @@ module Dialog = {
+         ~fullWidth: option(bool)=?,
+         ~maxWidth: option(maxWidth)=?,
+         ~onBackdropClick:
+-           option(ReasonReact.Callback.t(ReactEventRe.Mouse.t))=?,
++           option(callback(ReactEvent.Mouse.t))=?,
+         ~onClose: option(unit => unit)=?,
+         ~onEnter: option(unit => unit)=?,
+         ~onEntered: option(unit => unit)=?,
+         ~onEntering: option(unit => unit)=?,
+         ~onEscapeKeyDown:
+-           option(ReasonReact.Callback.t(ReactEventRe.Keyboard.t))=?,
++           option(callback(ReactEvent.Keyboard.t))=?,
+         ~onExit: option(unit => unit)=?,
+         ~onExited: option(unit => unit)=?,
+         ~onExiting: option(unit => unit)=?,
+@@ -2592,9 +2594,9 @@ module Divider = {
+          );
+   };
+   [@bs.module "material-ui/Divider/Divider"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~absolute: bool=?,
+       ~className: string=?,
+@@ -2707,9 +2709,9 @@ module Drawer = {
+          );
+   };
+   [@bs.module "material-ui/Drawer/Drawer"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~anchor: string=?,
+       ~className: string=?,
+@@ -2810,9 +2812,9 @@ module ExpansionPanelActions = {
+          );
+   };
+   [@bs.module "material-ui/ExpansionPanel/ExpansionPanelActions"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~className: string=?,
+       ~classes: Js.Dict.t(string)=?,
+@@ -2864,9 +2866,9 @@ module ExpansionPanelDetails = {
+          );
+   };
+   [@bs.module "material-ui/ExpansionPanel/ExpansionPanelDetails"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~className: string=?,
+       ~classes: Js.Dict.t(string)=?,
+@@ -2939,32 +2941,32 @@ module ExpansionPanelSummary = {
+          );
+   };
+   [@bs.module "material-ui/ExpansionPanel/ExpansionPanelSummary"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~className: string=?,
+       ~disabled: bool=?,
+       ~expanded: bool=?,
+       ~expandIcon: ReasonReact.reactElement=?,
+-      ~onChange: ReasonReact.Callback.t(ReactEventRe.Form.t)=?,
+-      ~onClick: ReasonReact.Callback.t(ReactEventRe.Mouse.t)=?,
++      ~onChange: callback(ReactEvent.Form.t)=?,
++      ~onClick: callback(ReactEvent.Mouse.t)=?,
+       ~buttonRef: ReasonReact.reactElement=?,
+       ~centerRipple: bool=?,
+       ~component: 'union_0=?,
+       ~disableRipple: bool=?,
+       ~focusRipple: bool=?,
+-      ~onBlur: ReasonReact.Callback.t(ReactEventRe.Focus.t)=?,
+-      ~onFocus: ReasonReact.Callback.t(ReactEventRe.Focus.t)=?,
+-      ~onKeyboardFocus: ReasonReact.Callback.t(ReactEventRe.Focus.t)=?,
+-      ~onKeyDown: ReasonReact.Callback.t(ReactEventRe.Keyboard.t)=?,
+-      ~onKeyUp: ReasonReact.Callback.t(ReactEventRe.Keyboard.t)=?,
+-      ~onMouseDown: ReasonReact.Callback.t(ReactEventRe.Mouse.t)=?,
+-      ~onMouseLeave: ReasonReact.Callback.t(ReactEventRe.Mouse.t)=?,
+-      ~onMouseUp: ReasonReact.Callback.t(ReactEventRe.Mouse.t)=?,
+-      ~onTouchEnd: ReasonReact.Callback.t(ReactEventRe.Touch.t)=?,
+-      ~onTouchMove: ReasonReact.Callback.t(ReactEventRe.Touch.t)=?,
+-      ~onTouchStart: ReasonReact.Callback.t(ReactEventRe.Touch.t)=?,
++      ~onBlur: callback(ReactEvent.Form.t)=?,
++      ~onFocus: callback(ReactEvent.Form.t)=?,
++      ~onKeyboardFocus: callback(ReactEvent.Form.t)=?,
++      ~onKeyDown: callback(ReactEvent.Keyboard.t)=?,
++      ~onKeyUp: callback(ReactEvent.Keyboard.t)=?,
++      ~onMouseDown: callback(ReactEvent.Mouse.t)=?,
++      ~onMouseLeave: callback(ReactEvent.Mouse.t)=?,
++      ~onMouseUp: callback(ReactEvent.Mouse.t)=?,
++      ~onTouchEnd: callback(ReactEvent.Touch.t)=?,
++      ~onTouchMove: callback(ReactEvent.Touch.t)=?,
++      ~onTouchStart: callback(ReactEvent.Touch.t)=?,
+       ~role: string=?,
+       ~tabIndex: 'union_o=?,
+       ~_TouchRippleProps: Js.t({..})=?,
+@@ -2981,26 +2983,26 @@ module ExpansionPanelSummary = {
+         ~disabled: option(bool)=?,
+         ~expanded: option(bool)=?,
+         ~expandIcon: option(ReasonReact.reactElement)=?,
+-        ~onChange: option(ReasonReact.Callback.t(ReactEventRe.Form.t))=?,
+-        ~onClick: option(ReasonReact.Callback.t(ReactEventRe.Mouse.t))=?,
++        ~onChange: option(callback(ReactEvent.Form.t))=?,
++        ~onClick: option(callback(ReactEvent.Mouse.t))=?,
+         ~buttonRef: option(ReasonReact.reactElement)=?,
+         ~centerRipple: option(bool)=?,
+         ~component:
+            option([ | `String(string) | `Element(ReasonReact.reactElement)])=?,
+         ~disableRipple: option(bool)=?,
+         ~focusRipple: option(bool)=?,
+-        ~onBlur: option(ReasonReact.Callback.t(ReactEventRe.Focus.t))=?,
+-        ~onFocus: option(ReasonReact.Callback.t(ReactEventRe.Focus.t))=?,
++        ~onBlur: option(callback(ReactEvent.Form.t))=?,
++        ~onFocus: option(callback(ReactEvent.Form.t))=?,
+         ~onKeyboardFocus:
+-           option(ReasonReact.Callback.t(ReactEventRe.Focus.t))=?,
+-        ~onKeyDown: option(ReasonReact.Callback.t(ReactEventRe.Keyboard.t))=?,
+-        ~onKeyUp: option(ReasonReact.Callback.t(ReactEventRe.Keyboard.t))=?,
+-        ~onMouseDown: option(ReasonReact.Callback.t(ReactEventRe.Mouse.t))=?,
+-        ~onMouseLeave: option(ReasonReact.Callback.t(ReactEventRe.Mouse.t))=?,
+-        ~onMouseUp: option(ReasonReact.Callback.t(ReactEventRe.Mouse.t))=?,
+-        ~onTouchEnd: option(ReasonReact.Callback.t(ReactEventRe.Touch.t))=?,
+-        ~onTouchMove: option(ReasonReact.Callback.t(ReactEventRe.Touch.t))=?,
+-        ~onTouchStart: option(ReasonReact.Callback.t(ReactEventRe.Touch.t))=?,
++           option(callback(ReactEvent.Form.t))=?,
++        ~onKeyDown: option(callback(ReactEvent.Keyboard.t))=?,
++        ~onKeyUp: option(callback(ReactEvent.Keyboard.t))=?,
++        ~onMouseDown: option(callback(ReactEvent.Mouse.t))=?,
++        ~onMouseLeave: option(callback(ReactEvent.Mouse.t))=?,
++        ~onMouseUp: option(callback(ReactEvent.Mouse.t))=?,
++        ~onTouchEnd: option(callback(ReactEvent.Touch.t))=?,
++        ~onTouchMove: option(callback(ReactEvent.Touch.t))=?,
++        ~onTouchStart: option(callback(ReactEvent.Touch.t))=?,
+         ~role: option(string)=?,
+         ~tabIndex: option([ | `Int(int) | `Float(float) | `String(string)])=?,
+         ~_TouchRippleProps: option(Js.t({..}))=?,
+@@ -3076,16 +3078,16 @@ module ExpansionPanel = {
+          );
+   };
+   [@bs.module "material-ui/ExpansionPanel/ExpansionPanel"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~className: string=?,
+       ~_CollapseProps: Js.t({..})=?,
+       ~defaultExpanded: bool=?,
+       ~disabled: bool=?,
+       ~expanded: bool=?,
+-      ~onChange: ReasonReact.Callback.t(ReactEventRe.Form.t)=?,
++      ~onChange: callback(ReactEvent.Form.t)=?,
+       ~component: 'union_h=?,
+       ~elevation: 'number_j=?,
+       ~square: bool=?,
+@@ -3102,7 +3104,7 @@ module ExpansionPanel = {
+         ~defaultExpanded: option(bool)=?,
+         ~disabled: option(bool)=?,
+         ~expanded: option(bool)=?,
+-        ~onChange: option(ReasonReact.Callback.t(ReactEventRe.Form.t))=?,
++        ~onChange: option(callback(ReactEvent.Form.t))=?,
+         ~component:
+            option([ | `String(string) | `Element(ReasonReact.reactElement)])=?,
+         ~elevation: option([ | `Int(int) | `Float(float)])=?,
+@@ -3139,9 +3141,9 @@ module Fade = {
+     exit: int,
+   };
+   [@bs.module "material-ui/transitions/Fade"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~_in: bool=?,
+       ~onEnter: unit => unit=?,
+@@ -3220,9 +3222,9 @@ module FormControlLabel = {
+          );
+   };
+   [@bs.module "material-ui/Form/FormControlLabel"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~checked: 'union_8=?,
+       ~className: string=?,
+@@ -3231,7 +3233,7 @@ module FormControlLabel = {
+       ~inputRef: ReasonReact.reactElement=?,
+       ~label: ReasonReact.reactElement=?,
+       ~name: string=?,
+-      ~onChange: ReasonReact.Callback.t(ReactEventRe.Form.t)=?,
++      ~onChange: callback(ReactEvent.Form.t)=?,
+       ~value: string=?,
+       ~classes: Js.Dict.t(string)=?,
+       ~style: ReactDOMRe.style=?,
+@@ -3248,7 +3250,7 @@ module FormControlLabel = {
+         ~inputRef: option(ReasonReact.reactElement)=?,
+         ~label: option(ReasonReact.reactElement)=?,
+         ~name: option(string)=?,
+-        ~onChange: option(ReasonReact.Callback.t(ReactEventRe.Form.t))=?,
++        ~onChange: option(callback(ReactEvent.Form.t))=?,
+         ~value: option(string)=?,
+         ~classes: option(Classes.t)=?,
+         ~style: option(ReactDOMRe.style)=?,
+@@ -3313,9 +3315,9 @@ module FormControl = {
+          );
+   };
+   [@bs.module "material-ui/Form/FormControl"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~className: string=?,
+       ~component: 'union_w=?,
+@@ -3323,8 +3325,8 @@ module FormControl = {
+       ~error: bool=?,
+       ~fullWidth: bool=?,
+       ~margin: string=?,
+-      ~onBlur: ReasonReact.Callback.t(ReactEventRe.Focus.t)=?,
+-      ~onFocus: ReasonReact.Callback.t(ReactEventRe.Focus.t)=?,
++      ~onBlur: callback(ReactEvent.Form.t)=?,
++      ~onFocus: callback(ReactEvent.Form.t)=?,
+       ~required: bool=?,
+       ~classes: Js.Dict.t(string)=?,
+       ~style: ReactDOMRe.style=?,
+@@ -3341,8 +3343,8 @@ module FormControl = {
+         ~error: option(bool)=?,
+         ~fullWidth: option(bool)=?,
+         ~margin: option(margin)=?,
+-        ~onBlur: option(ReasonReact.Callback.t(ReactEventRe.Focus.t))=?,
+-        ~onFocus: option(ReasonReact.Callback.t(ReactEventRe.Focus.t))=?,
++        ~onBlur: option(callback(ReactEvent.Form.t))=?,
++        ~onFocus: option(callback(ReactEvent.Form.t))=?,
+         ~required: option(bool)=?,
+         ~classes: option(Classes.t)=?,
+         ~style: option(ReactDOMRe.style)=?,
+@@ -3395,9 +3397,9 @@ module FormGroup = {
+          );
+   };
+   [@bs.module "material-ui/Form/FormGroup"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~className: string=?,
+       ~row: bool=?,
+@@ -3463,9 +3465,9 @@ module FormHelperText = {
+          );
+   };
+   [@bs.module "material-ui/Form/FormHelperText"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~className: string=?,
+       ~component: 'union_8=?,
+@@ -3545,9 +3547,9 @@ module FormLabel = {
+          );
+   };
+   [@bs.module "material-ui/Form/FormLabel"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~className: string=?,
+       ~component: 'union_2=?,
+@@ -3649,9 +3651,9 @@ module GridListTileBar = {
+          );
+   };
+   [@bs.module "material-ui/GridList/GridListTileBar"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~actionIcon: ReasonReact.reactElement=?,
+       ~actionPosition: string=?,
+@@ -3729,9 +3731,9 @@ module GridListTile = {
+          );
+   };
+   [@bs.module "material-ui/GridList/GridListTile"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~className: string=?,
+       ~cols: 'number_x=?,
+@@ -3795,9 +3797,9 @@ module GridList = {
+          );
+   };
+   [@bs.module "material-ui/GridList/GridList"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~cellHeight: 'union_d=?,
+       ~className: string=?,
+@@ -4102,9 +4104,9 @@ module Grid = {
+          );
+   };
+   [@bs.module "material-ui/Grid/Grid"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~alignContent: string=?,
+       ~alignItems: string=?,
+@@ -4193,9 +4195,9 @@ module Grow = {
+   [@bs.deriving jsConverter]
+   type timeout = [ | [@bs.as "auto"] `Auto];
+   [@bs.module "material-ui/transitions/Grow"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~_in: bool=?,
+       ~onEnter: unit => unit=?,
+@@ -4270,9 +4272,9 @@ module Hidden = {
+     | [@bs.as "xl"] `Xl
+   ];
+   [@bs.module "material-ui/Hidden/Hidden"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~className: string=?,
+       ~implementation: string=?,
+@@ -4393,9 +4395,9 @@ module IconButton = {
+          );
+   };
+   [@bs.module "material-ui/IconButton/IconButton"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~className: string=?,
+       ~color: string=?,
+@@ -4405,18 +4407,18 @@ module IconButton = {
+       ~centerRipple: bool=?,
+       ~component: 'union_0=?,
+       ~focusRipple: bool=?,
+-      ~onBlur: ReasonReact.Callback.t(ReactEventRe.Focus.t)=?,
+-      ~onClick: ReasonReact.Callback.t(ReactEventRe.Mouse.t)=?,
+-      ~onFocus: ReasonReact.Callback.t(ReactEventRe.Focus.t)=?,
+-      ~onKeyboardFocus: ReasonReact.Callback.t(ReactEventRe.Focus.t)=?,
+-      ~onKeyDown: ReasonReact.Callback.t(ReactEventRe.Keyboard.t)=?,
+-      ~onKeyUp: ReasonReact.Callback.t(ReactEventRe.Keyboard.t)=?,
+-      ~onMouseDown: ReasonReact.Callback.t(ReactEventRe.Mouse.t)=?,
+-      ~onMouseLeave: ReasonReact.Callback.t(ReactEventRe.Mouse.t)=?,
+-      ~onMouseUp: ReasonReact.Callback.t(ReactEventRe.Mouse.t)=?,
+-      ~onTouchEnd: ReasonReact.Callback.t(ReactEventRe.Touch.t)=?,
+-      ~onTouchMove: ReasonReact.Callback.t(ReactEventRe.Touch.t)=?,
+-      ~onTouchStart: ReasonReact.Callback.t(ReactEventRe.Touch.t)=?,
++      ~onBlur: callback(ReactEvent.Form.t)=?,
++      ~onClick: callback(ReactEvent.Mouse.t)=?,
++      ~onFocus: callback(ReactEvent.Form.t)=?,
++      ~onKeyboardFocus: callback(ReactEvent.Form.t)=?,
++      ~onKeyDown: callback(ReactEvent.Keyboard.t)=?,
++      ~onKeyUp: callback(ReactEvent.Keyboard.t)=?,
++      ~onMouseDown: callback(ReactEvent.Mouse.t)=?,
++      ~onMouseLeave: callback(ReactEvent.Mouse.t)=?,
++      ~onMouseUp: callback(ReactEvent.Mouse.t)=?,
++      ~onTouchEnd: callback(ReactEvent.Touch.t)=?,
++      ~onTouchMove: callback(ReactEvent.Touch.t)=?,
++      ~onTouchStart: callback(ReactEvent.Touch.t)=?,
+       ~role: string=?,
+       ~tabIndex: 'union_o=?,
+       ~_TouchRippleProps: Js.t({..})=?,
+@@ -4438,19 +4440,19 @@ module IconButton = {
+         ~component:
+            option([ | `String(string) | `Element(ReasonReact.reactElement)])=?,
+         ~focusRipple: option(bool)=?,
+-        ~onBlur: option(ReasonReact.Callback.t(ReactEventRe.Focus.t))=?,
+-        ~onClick: option(ReasonReact.Callback.t(ReactEventRe.Mouse.t))=?,
+-        ~onFocus: option(ReasonReact.Callback.t(ReactEventRe.Focus.t))=?,
++        ~onBlur: option(callback(ReactEvent.Form.t))=?,
++        ~onClick: option(callback(ReactEvent.Mouse.t))=?,
++        ~onFocus: option(callback(ReactEvent.Form.t))=?,
+         ~onKeyboardFocus:
+-           option(ReasonReact.Callback.t(ReactEventRe.Focus.t))=?,
+-        ~onKeyDown: option(ReasonReact.Callback.t(ReactEventRe.Keyboard.t))=?,
+-        ~onKeyUp: option(ReasonReact.Callback.t(ReactEventRe.Keyboard.t))=?,
+-        ~onMouseDown: option(ReasonReact.Callback.t(ReactEventRe.Mouse.t))=?,
+-        ~onMouseLeave: option(ReasonReact.Callback.t(ReactEventRe.Mouse.t))=?,
+-        ~onMouseUp: option(ReasonReact.Callback.t(ReactEventRe.Mouse.t))=?,
+-        ~onTouchEnd: option(ReasonReact.Callback.t(ReactEventRe.Touch.t))=?,
+-        ~onTouchMove: option(ReasonReact.Callback.t(ReactEventRe.Touch.t))=?,
+-        ~onTouchStart: option(ReasonReact.Callback.t(ReactEventRe.Touch.t))=?,
++           option(callback(ReactEvent.Form.t))=?,
++        ~onKeyDown: option(callback(ReactEvent.Keyboard.t))=?,
++        ~onKeyUp: option(callback(ReactEvent.Keyboard.t))=?,
++        ~onMouseDown: option(callback(ReactEvent.Mouse.t))=?,
++        ~onMouseLeave: option(callback(ReactEvent.Mouse.t))=?,
++        ~onMouseUp: option(callback(ReactEvent.Mouse.t))=?,
++        ~onTouchEnd: option(callback(ReactEvent.Touch.t))=?,
++        ~onTouchMove: option(callback(ReactEvent.Touch.t))=?,
++        ~onTouchStart: option(callback(ReactEvent.Touch.t))=?,
+         ~role: option(string)=?,
+         ~tabIndex: option([ | `Int(int) | `Float(float) | `String(string)])=?,
+         ~_TouchRippleProps: option(Js.t({..}))=?,
+@@ -4542,9 +4544,9 @@ module Icon = {
+          );
+   };
+   [@bs.module "material-ui/Icon/Icon"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~className: string=?,
+       ~color: string=?,
+@@ -4607,9 +4609,9 @@ module InputAdornment = {
+          );
+   };
+   [@bs.module "material-ui/Input/InputAdornment"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~className: string=?,
+       ~component: 'union_o=?,
+@@ -4685,9 +4687,9 @@ module InputLabel = {
+          );
+   };
+   [@bs.module "material-ui/Input/InputLabel"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~className: string=?,
+       ~disableAnimation: bool=?,
+@@ -4808,9 +4810,9 @@ module Input = {
+          );
+   };
+   [@bs.module "material-ui/Input/Input"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~autoComplete: string=?,
+       ~autoFocus: bool=?,
+@@ -4828,13 +4830,13 @@ module Input = {
+       ~margin: string=?,
+       ~multiline: bool=?,
+       ~name: string=?,
+-      ~onBlur: ReasonReact.Callback.t(ReactEventRe.Focus.t)=?,
+-      ~onChange: ReasonReact.Callback.t(ReactEventRe.Form.t)=?,
+-      ~onEmpty: ReasonReact.Callback.t(ReactEventRe.Synthetic.t)=?,
+-      ~onFilled: ReasonReact.Callback.t(ReactEventRe.Synthetic.t)=?,
+-      ~onFocus: ReasonReact.Callback.t(ReactEventRe.Focus.t)=?,
+-      ~onKeyDown: ReasonReact.Callback.t(ReactEventRe.Keyboard.t)=?,
+-      ~onKeyUp: ReasonReact.Callback.t(ReactEventRe.Keyboard.t)=?,
++      ~onBlur: callback(ReactEvent.Form.t)=?,
++      ~onChange: callback(ReactEvent.Form.t)=?,
++      ~onEmpty: callback(ReactEvent.Synthetic.t)=?,
++      ~onFilled: callback(ReactEvent.Synthetic.t)=?,
++      ~onFocus: callback(ReactEvent.Form.t)=?,
++      ~onKeyDown: callback(ReactEvent.Keyboard.t)=?,
++      ~onKeyUp: callback(ReactEvent.Keyboard.t)=?,
+       ~placeholder: string=?,
+       ~readOnly: bool=?,
+       ~rows: 'union_l=?,
+@@ -4867,13 +4869,13 @@ module Input = {
+         ~margin: option(margin)=?,
+         ~multiline: option(bool)=?,
+         ~name: option(string)=?,
+-        ~onBlur: option(ReasonReact.Callback.t(ReactEventRe.Focus.t))=?,
+-        ~onChange: option(ReasonReact.Callback.t(ReactEventRe.Form.t))=?,
+-        ~onEmpty: option(ReasonReact.Callback.t(ReactEventRe.Synthetic.t))=?,
+-        ~onFilled: option(ReasonReact.Callback.t(ReactEventRe.Synthetic.t))=?,
+-        ~onFocus: option(ReasonReact.Callback.t(ReactEventRe.Focus.t))=?,
+-        ~onKeyDown: option(ReasonReact.Callback.t(ReactEventRe.Keyboard.t))=?,
+-        ~onKeyUp: option(ReasonReact.Callback.t(ReactEventRe.Keyboard.t))=?,
++        ~onBlur: option(callback(ReactEvent.Form.t))=?,
++        ~onChange: option(callback(ReactEvent.Form.t))=?,
++        ~onEmpty: option(callback(ReactEvent.Synthetic.t))=?,
++        ~onFilled: option(callback(ReactEvent.Synthetic.t))=?,
++        ~onFocus: option(callback(ReactEvent.Form.t))=?,
++        ~onKeyDown: option(callback(ReactEvent.Keyboard.t))=?,
++        ~onKeyUp: option(callback(ReactEvent.Keyboard.t))=?,
+         ~placeholder: option(string)=?,
+         ~readOnly: option(bool)=?,
+         ~rows: option([ | `String(string) | `Int(int) | `Float(float)])=?,
+@@ -5018,9 +5020,9 @@ module LinearProgress = {
+          );
+   };
+   [@bs.module "material-ui/Progress/LinearProgress"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~className: string=?,
+       ~color: string=?,
+@@ -5087,9 +5089,9 @@ module ListItemAvatar = {
+          );
+   };
+   [@bs.module "material-ui/List/ListItemAvatar"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~className: string=?,
+       ~classes: Js.Dict.t(string)=?,
+@@ -5141,9 +5143,9 @@ module ListItemIcon = {
+          );
+   };
+   [@bs.module "material-ui/List/ListItemIcon"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~className: string=?,
+       ~classes: Js.Dict.t(string)=?,
+@@ -5195,9 +5197,9 @@ module ListItemSecondaryAction = {
+          );
+   };
+   [@bs.module "material-ui/List/ListItemSecondaryAction"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~className: string=?,
+       ~classes: Js.Dict.t(string)=?,
+@@ -5264,9 +5266,9 @@ module ListItemText = {
+          );
+   };
+   [@bs.module "material-ui/List/ListItemText"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~className: string=?,
+       ~disableTypography: bool=?,
+@@ -5357,9 +5359,9 @@ module ListItem = {
+          );
+   };
+   [@bs.module "material-ui/List/ListItem"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~button: bool=?,
+       ~className: string=?,
+@@ -5371,8 +5373,8 @@ module ListItem = {
+       ~disableGutters: bool=?,
+       ~divider: bool=?,
+       ~value: 'union_c=?,
+-      ~onFocus: ReasonReact.Callback.t(ReactEventRe.Focus.t)=?,
+-      ~onClick: ReasonReact.Callback.t(ReactEventRe.Mouse.t)=?,
++      ~onFocus: callback(ReactEvent.Form.t)=?,
++      ~onClick: callback(ReactEvent.Mouse.t)=?,
+       ~classes: Js.Dict.t(string)=?,
+       ~style: ReactDOMRe.style=?,
+       unit
+@@ -5401,8 +5403,8 @@ module ListItem = {
+                | `StringArray(array(string))
+              ],
+            )=?,
+-        ~onFocus: option(ReasonReact.Callback.t(ReactEventRe.Focus.t))=?,
+-        ~onClick: option(ReasonReact.Callback.t(ReactEventRe.Mouse.t))=?,
++        ~onFocus: option(callback(ReactEvent.Form.t))=?,
++        ~onClick: option(callback(ReactEvent.Mouse.t))=?,
+         ~classes: option(Classes.t)=?,
+         ~style: option(ReactDOMRe.style)=?,
+         children,
+@@ -5473,9 +5475,9 @@ module ListSubheader = {
+          );
+   };
+   [@bs.module "material-ui/List/ListSubheader"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~className: string=?,
+       ~color: string=?,
+@@ -5549,9 +5551,9 @@ module List = {
+          );
+   };
+   [@bs.module "material-ui/List/List"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~className: string=?,
+       ~component: 'union_k=?,
+@@ -5619,17 +5621,17 @@ module MenuItem = {
+          );
+   };
+   [@bs.module "material-ui/Menu/MenuItem"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~className: string=?,
+       ~component: 'union_d=?,
+       ~role: string=?,
+       ~selected: bool=?,
+       ~value: 'union_o=?,
+-      ~onFocus: ReasonReact.Callback.t(ReactEventRe.Focus.t)=?,
+-      ~onClick: ReasonReact.Callback.t(ReactEventRe.Mouse.t)=?,
++      ~onFocus: callback(ReactEvent.Form.t)=?,
++      ~onClick: callback(ReactEvent.Mouse.t)=?,
+       ~button: bool=?,
+       ~_ContainerComponent: 'union_e=?,
+       ~_ContainerProps: Js.t({..})=?,
+@@ -5659,8 +5661,8 @@ module MenuItem = {
+                | `StringArray(array(string))
+              ],
+            )=?,
+-        ~onFocus: option(ReasonReact.Callback.t(ReactEventRe.Focus.t))=?,
+-        ~onClick: option(ReasonReact.Callback.t(ReactEventRe.Mouse.t))=?,
++        ~onFocus: option(callback(ReactEvent.Form.t))=?,
++        ~onClick: option(callback(ReactEvent.Mouse.t))=?,
+         ~button: option(bool)=?,
+         ~_ContainerComponent:
+            option([ | `String(string) | `Element(ReasonReact.reactElement)])=?,
+@@ -5702,13 +5704,13 @@ module MenuItem = {
+ 
+ module MenuList = {
+   [@bs.module "material-ui/Menu/MenuList"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~className: string=?,
+-      ~onBlur: ReasonReact.Callback.t(ReactEventRe.Focus.t)=?,
+-      ~onKeyDown: ReasonReact.Callback.t(ReactEventRe.Keyboard.t)=?,
++      ~onBlur: callback(ReactEvent.Form.t)=?,
++      ~onKeyDown: callback(ReactEvent.Keyboard.t)=?,
+       ~component: 'union_k=?,
+       ~dense: bool=?,
+       ~disablePadding: bool=?,
+@@ -5721,8 +5723,8 @@ module MenuList = {
+   let make =
+       (
+         ~className: option(string)=?,
+-        ~onBlur: option(ReasonReact.Callback.t(ReactEventRe.Focus.t))=?,
+-        ~onKeyDown: option(ReasonReact.Callback.t(ReactEventRe.Keyboard.t))=?,
++        ~onBlur: option(callback(ReactEvent.Form.t))=?,
++        ~onKeyDown: option(callback(ReactEvent.Keyboard.t))=?,
+         ~component:
+            option([ | `String(string) | `Element(ReasonReact.reactElement)])=?,
+         ~dense: option(bool)=?,
+@@ -5799,9 +5801,9 @@ module Menu = {
+          );
+   };
+   [@bs.module "material-ui/Menu/Menu"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~anchorEl: Js.t({..})=?,
+       ~_MenuListProps: Js.t({..})=?,
+@@ -5995,9 +5997,9 @@ module MobileStepper = {
+          );
+   };
+   [@bs.module "material-ui/MobileStepper/MobileStepper"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~activeStep: 'number_t=?,
+       ~backButton: ReasonReact.reactElement=?,
+@@ -6080,9 +6082,9 @@ module Modal = {
+          );
+   };
+   [@bs.module "material-ui/Modal/Modal"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~_BackdropComponent: 'union_u=?,
+       ~_BackdropProps: Js.t({..})=?,
+@@ -6096,9 +6098,9 @@ module Modal = {
+       ~hideBackdrop: bool=?,
+       ~keepMounted: bool=?,
+       ~manager: Js.t({..})=?,
+-      ~onBackdropClick: ReasonReact.Callback.t(ReactEventRe.Mouse.t)=?,
++      ~onBackdropClick: callback(ReactEvent.Mouse.t)=?,
+       ~onClose: unit => unit=?,
+-      ~onEscapeKeyDown: ReasonReact.Callback.t(ReactEventRe.Keyboard.t)=?,
++      ~onEscapeKeyDown: callback(ReactEvent.Keyboard.t)=?,
+       ~onRendered: unit => unit=?,
+       ~_open: bool,
+       ~classes: Js.Dict.t(string)=?,
+@@ -6129,10 +6131,10 @@ module Modal = {
+         ~keepMounted: option(bool)=?,
+         ~manager: option(Js.t({..}))=?,
+         ~onBackdropClick:
+-           option(ReasonReact.Callback.t(ReactEventRe.Mouse.t))=?,
++           option(callback(ReactEvent.Mouse.t))=?,
+         ~onClose: option(unit => unit)=?,
+         ~onEscapeKeyDown:
+-           option(ReasonReact.Callback.t(ReactEventRe.Keyboard.t))=?,
++           option(callback(ReactEvent.Keyboard.t))=?,
+         ~onRendered: option(unit => unit)=?,
+         ~_open: bool,
+         ~classes: option(Classes.t)=?,
+@@ -6171,9 +6173,9 @@ module Modal = {
+ 
+ module MuiThemeProvider = {
+   [@bs.module "material-ui/styles/MuiThemeProvider"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~disableStylesGeneration: bool=?,
+       ~sheetsManager: Js.t({..})=?,
+@@ -6309,9 +6311,9 @@ module Paper = {
+          );
+   };
+   [@bs.module "material-ui/Paper/Paper"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~className: string=?,
+       ~component: 'union_h=?,
+@@ -6400,9 +6402,9 @@ module Popover = {
+          );
+   };
+   [@bs.module "material-ui/Popover/Popover"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~action: ReasonReact.reactElement=?,
+       ~anchorEl: 'union_4=?,
+@@ -6437,8 +6439,8 @@ module Popover = {
+       ~hideBackdrop: bool=?,
+       ~keepMounted: bool=?,
+       ~manager: Js.t({..})=?,
+-      ~onBackdropClick: ReasonReact.Callback.t(ReactEventRe.Mouse.t)=?,
+-      ~onEscapeKeyDown: ReasonReact.Callback.t(ReactEventRe.Keyboard.t)=?,
++      ~onBackdropClick: callback(ReactEvent.Mouse.t)=?,
++      ~onEscapeKeyDown: callback(ReactEvent.Keyboard.t)=?,
+       ~onRendered: unit => unit=?,
+       ~classes: Js.Dict.t(string)=?,
+       ~style: ReactDOMRe.style=?,
+@@ -6504,9 +6506,9 @@ module Popover = {
+         ~keepMounted: option(bool)=?,
+         ~manager: option(Js.t({..}))=?,
+         ~onBackdropClick:
+-           option(ReasonReact.Callback.t(ReactEventRe.Mouse.t))=?,
++           option(callback(ReactEvent.Mouse.t))=?,
+         ~onEscapeKeyDown:
+-           option(ReasonReact.Callback.t(ReactEventRe.Keyboard.t))=?,
++           option(callback(ReactEvent.Keyboard.t))=?,
+         ~onRendered: option(unit => unit)=?,
+         ~classes: option(Classes.t)=?,
+         ~style: option(ReactDOMRe.style)=?,
+@@ -6585,9 +6587,9 @@ module Popover = {
+ 
+ module Portal = {
+   [@bs.module "material-ui/Portal/Portal"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~container: 'union_0=?,
+       ~onRendered: unit => unit=?,
+@@ -6624,14 +6626,14 @@ module Portal = {
+ 
+ module RadioGroup = {
+   [@bs.module "material-ui/Radio/RadioGroup"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~name: string=?,
+-      ~onBlur: ReasonReact.Callback.t(ReactEventRe.Focus.t)=?,
+-      ~onChange: ReasonReact.Callback.t(ReactEventRe.Form.t)=?,
+-      ~onKeyDown: ReasonReact.Callback.t(ReactEventRe.Keyboard.t)=?,
++      ~onBlur: callback(ReactEvent.Form.t)=?,
++      ~onChange: callback(ReactEvent.Form.t)=?,
++      ~onKeyDown: callback(ReactEvent.Keyboard.t)=?,
+       ~value: string=?,
+       ~className: string=?,
+       ~row: bool=?,
+@@ -6643,9 +6645,9 @@ module RadioGroup = {
+   let make =
+       (
+         ~name: option(string)=?,
+-        ~onBlur: option(ReasonReact.Callback.t(ReactEventRe.Focus.t))=?,
+-        ~onChange: option(ReasonReact.Callback.t(ReactEventRe.Form.t))=?,
+-        ~onKeyDown: option(ReasonReact.Callback.t(ReactEventRe.Keyboard.t))=?,
++        ~onBlur: option(callback(ReactEvent.Form.t))=?,
++        ~onChange: option(callback(ReactEvent.Form.t))=?,
++        ~onKeyDown: option(callback(ReactEvent.Keyboard.t))=?,
+         ~value: option(string)=?,
+         ~className: option(string)=?,
+         ~row: option(bool)=?,
+@@ -6711,9 +6713,9 @@ module Radio = {
+          );
+   };
+   [@bs.module "material-ui/Radio/Radio"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~checked: 'union_7=?,
+       ~checkedIcon: ReasonReact.reactElement=?,
+@@ -6724,7 +6726,7 @@ module Radio = {
+       ~id: string=?,
+       ~inputProps: Js.t({..})=?,
+       ~inputRef: ReasonReact.reactElement=?,
+-      ~onChange: ReasonReact.Callback.t(ReactEventRe.Form.t)=?,
++      ~onChange: callback(ReactEvent.Form.t)=?,
+       ~_type: string=?,
+       ~value: string=?,
+       ~classes: Js.Dict.t(string)=?,
+@@ -6744,7 +6746,7 @@ module Radio = {
+         ~id: option(string)=?,
+         ~inputProps: option(Js.t({..}))=?,
+         ~inputRef: option(ReasonReact.reactElement)=?,
+-        ~onChange: option(ReasonReact.Callback.t(ReactEventRe.Form.t))=?,
++        ~onChange: option(callback(ReactEvent.Form.t))=?,
+         ~_type: option(string)=?,
+         ~value: option(string)=?,
+         ~classes: option(Classes.t)=?,
+@@ -6812,9 +6814,9 @@ module Select = {
+          );
+   };
+   [@bs.module "material-ui/Select/Select"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~autoWidth: bool=?,
+       ~displayEmpty: bool=?,
+@@ -6823,7 +6825,7 @@ module Select = {
+       ~_MenuProps: Js.t({..})=?,
+       ~multiple: bool=?,
+       ~native: bool=?,
+-      ~onChange: ReasonReact.Callback.t(ReactEventRe.Form.t)=?,
++      ~onChange: callback(ReactEvent.Form.t)=?,
+       ~onClose: unit => unit=?,
+       ~onOpen: unit => unit=?,
+       ~_open: bool=?,
+@@ -6845,12 +6847,12 @@ module Select = {
+       ~margin: string=?,
+       ~multiline: bool=?,
+       ~name: string=?,
+-      ~onBlur: ReasonReact.Callback.t(ReactEventRe.Focus.t)=?,
+-      ~onEmpty: ReasonReact.Callback.t(ReactEventRe.Synthetic.t)=?,
+-      ~onFilled: ReasonReact.Callback.t(ReactEventRe.Synthetic.t)=?,
+-      ~onFocus: ReasonReact.Callback.t(ReactEventRe.Focus.t)=?,
+-      ~onKeyDown: ReasonReact.Callback.t(ReactEventRe.Keyboard.t)=?,
+-      ~onKeyUp: ReasonReact.Callback.t(ReactEventRe.Keyboard.t)=?,
++      ~onBlur: callback(ReactEvent.Form.t)=?,
++      ~onEmpty: callback(ReactEvent.Synthetic.t)=?,
++      ~onFilled: callback(ReactEvent.Synthetic.t)=?,
++      ~onFocus: callback(ReactEvent.Form.t)=?,
++      ~onKeyDown: callback(ReactEvent.Keyboard.t)=?,
++      ~onKeyUp: callback(ReactEvent.Keyboard.t)=?,
+       ~placeholder: string=?,
+       ~readOnly: bool=?,
+       ~rows: 'union_l=?,
+@@ -6872,7 +6874,7 @@ module Select = {
+         ~_MenuProps: option(Js.t({..}))=?,
+         ~multiple: option(bool)=?,
+         ~native: option(bool)=?,
+-        ~onChange: option(ReasonReact.Callback.t(ReactEventRe.Form.t))=?,
++        ~onChange: option(callback(ReactEvent.Form.t))=?,
+         ~onClose: option(unit => unit)=?,
+         ~onOpen: option(unit => unit)=?,
+         ~_open: option(bool)=?,
+@@ -6905,12 +6907,12 @@ module Select = {
+         ~margin: option(margin)=?,
+         ~multiline: option(bool)=?,
+         ~name: option(string)=?,
+-        ~onBlur: option(ReasonReact.Callback.t(ReactEventRe.Focus.t))=?,
+-        ~onEmpty: option(ReasonReact.Callback.t(ReactEventRe.Synthetic.t))=?,
+-        ~onFilled: option(ReasonReact.Callback.t(ReactEventRe.Synthetic.t))=?,
+-        ~onFocus: option(ReasonReact.Callback.t(ReactEventRe.Focus.t))=?,
+-        ~onKeyDown: option(ReasonReact.Callback.t(ReactEventRe.Keyboard.t))=?,
+-        ~onKeyUp: option(ReasonReact.Callback.t(ReactEventRe.Keyboard.t))=?,
++        ~onBlur: option(callback(ReactEvent.Form.t))=?,
++        ~onEmpty: option(callback(ReactEvent.Synthetic.t))=?,
++        ~onFilled: option(callback(ReactEvent.Synthetic.t))=?,
++        ~onFocus: option(callback(ReactEvent.Form.t))=?,
++        ~onKeyDown: option(callback(ReactEvent.Keyboard.t))=?,
++        ~onKeyUp: option(callback(ReactEvent.Keyboard.t))=?,
+         ~placeholder: option(string)=?,
+         ~readOnly: option(bool)=?,
+         ~rows: option([ | `String(string) | `Int(int) | `Float(float)])=?,
+@@ -6989,9 +6991,9 @@ module Slide = {
+     exit: int,
+   };
+   [@bs.module "material-ui/transitions/Slide"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~direction: string=?,
+       ~_in: bool=?,
+@@ -7076,9 +7078,9 @@ module SnackbarContent = {
+          );
+   };
+   [@bs.module "material-ui/Snackbar/SnackbarContent"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~action: ReasonReact.reactElement=?,
+       ~className: string=?,
+@@ -7174,9 +7176,9 @@ module Snackbar = {
+          );
+   };
+   [@bs.module "material-ui/Snackbar/Snackbar"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~action: ReasonReact.reactElement=?,
+       ~anchorOrigin: 'shape_m=?,
+@@ -7192,8 +7194,8 @@ module Snackbar = {
+       ~onExit: unit => unit=?,
+       ~onExited: unit => unit=?,
+       ~onExiting: unit => unit=?,
+-      ~onMouseEnter: ReasonReact.Callback.t(ReactEventRe.Mouse.t)=?,
+-      ~onMouseLeave: ReasonReact.Callback.t(ReactEventRe.Mouse.t)=?,
++      ~onMouseEnter: callback(ReactEvent.Mouse.t)=?,
++      ~onMouseLeave: callback(ReactEvent.Mouse.t)=?,
+       ~_open: bool=?,
+       ~resumeHideDuration: 'number_6=?,
+       ~_SnackbarContentProps: Js.t({..})=?,
+@@ -7221,8 +7223,8 @@ module Snackbar = {
+         ~onExit: option(unit => unit)=?,
+         ~onExited: option(unit => unit)=?,
+         ~onExiting: option(unit => unit)=?,
+-        ~onMouseEnter: option(ReasonReact.Callback.t(ReactEventRe.Mouse.t))=?,
+-        ~onMouseLeave: option(ReasonReact.Callback.t(ReactEventRe.Mouse.t))=?,
++        ~onMouseEnter: option(callback(ReactEvent.Mouse.t))=?,
++        ~onMouseLeave: option(callback(ReactEvent.Mouse.t))=?,
+         ~_open: option(bool)=?,
+         ~resumeHideDuration: option([ | `Int(int) | `Float(float)])=?,
+         ~_SnackbarContentProps: option(Js.t({..}))=?,
+@@ -7319,9 +7321,9 @@ module StepButton = {
+          );
+   };
+   [@bs.module "material-ui/Stepper/StepButton"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~active: bool=?,
+       ~alternativeLabel: bool=?,
+@@ -7337,18 +7339,18 @@ module StepButton = {
+       ~component: 'union_0=?,
+       ~disableRipple: bool=?,
+       ~focusRipple: bool=?,
+-      ~onBlur: ReasonReact.Callback.t(ReactEventRe.Focus.t)=?,
+-      ~onClick: ReasonReact.Callback.t(ReactEventRe.Mouse.t)=?,
+-      ~onFocus: ReasonReact.Callback.t(ReactEventRe.Focus.t)=?,
+-      ~onKeyboardFocus: ReasonReact.Callback.t(ReactEventRe.Focus.t)=?,
+-      ~onKeyDown: ReasonReact.Callback.t(ReactEventRe.Keyboard.t)=?,
+-      ~onKeyUp: ReasonReact.Callback.t(ReactEventRe.Keyboard.t)=?,
+-      ~onMouseDown: ReasonReact.Callback.t(ReactEventRe.Mouse.t)=?,
+-      ~onMouseLeave: ReasonReact.Callback.t(ReactEventRe.Mouse.t)=?,
+-      ~onMouseUp: ReasonReact.Callback.t(ReactEventRe.Mouse.t)=?,
+-      ~onTouchEnd: ReasonReact.Callback.t(ReactEventRe.Touch.t)=?,
+-      ~onTouchMove: ReasonReact.Callback.t(ReactEventRe.Touch.t)=?,
+-      ~onTouchStart: ReasonReact.Callback.t(ReactEventRe.Touch.t)=?,
++      ~onBlur: callback(ReactEvent.Form.t)=?,
++      ~onClick: callback(ReactEvent.Mouse.t)=?,
++      ~onFocus: callback(ReactEvent.Form.t)=?,
++      ~onKeyboardFocus: callback(ReactEvent.Form.t)=?,
++      ~onKeyDown: callback(ReactEvent.Keyboard.t)=?,
++      ~onKeyUp: callback(ReactEvent.Keyboard.t)=?,
++      ~onMouseDown: callback(ReactEvent.Mouse.t)=?,
++      ~onMouseLeave: callback(ReactEvent.Mouse.t)=?,
++      ~onMouseUp: callback(ReactEvent.Mouse.t)=?,
++      ~onTouchEnd: callback(ReactEvent.Touch.t)=?,
++      ~onTouchMove: callback(ReactEvent.Touch.t)=?,
++      ~onTouchStart: callback(ReactEvent.Touch.t)=?,
+       ~role: string=?,
+       ~tabIndex: 'union_o=?,
+       ~_TouchRippleProps: Js.t({..})=?,
+@@ -7376,19 +7378,19 @@ module StepButton = {
+            option([ | `String(string) | `Element(ReasonReact.reactElement)])=?,
+         ~disableRipple: option(bool)=?,
+         ~focusRipple: option(bool)=?,
+-        ~onBlur: option(ReasonReact.Callback.t(ReactEventRe.Focus.t))=?,
+-        ~onClick: option(ReasonReact.Callback.t(ReactEventRe.Mouse.t))=?,
+-        ~onFocus: option(ReasonReact.Callback.t(ReactEventRe.Focus.t))=?,
++        ~onBlur: option(callback(ReactEvent.Form.t))=?,
++        ~onClick: option(callback(ReactEvent.Mouse.t))=?,
++        ~onFocus: option(callback(ReactEvent.Form.t))=?,
+         ~onKeyboardFocus:
+-           option(ReasonReact.Callback.t(ReactEventRe.Focus.t))=?,
+-        ~onKeyDown: option(ReasonReact.Callback.t(ReactEventRe.Keyboard.t))=?,
+-        ~onKeyUp: option(ReasonReact.Callback.t(ReactEventRe.Keyboard.t))=?,
+-        ~onMouseDown: option(ReasonReact.Callback.t(ReactEventRe.Mouse.t))=?,
+-        ~onMouseLeave: option(ReasonReact.Callback.t(ReactEventRe.Mouse.t))=?,
+-        ~onMouseUp: option(ReasonReact.Callback.t(ReactEventRe.Mouse.t))=?,
+-        ~onTouchEnd: option(ReasonReact.Callback.t(ReactEventRe.Touch.t))=?,
+-        ~onTouchMove: option(ReasonReact.Callback.t(ReactEventRe.Touch.t))=?,
+-        ~onTouchStart: option(ReasonReact.Callback.t(ReactEventRe.Touch.t))=?,
++           option(callback(ReactEvent.Form.t))=?,
++        ~onKeyDown: option(callback(ReactEvent.Keyboard.t))=?,
++        ~onKeyUp: option(callback(ReactEvent.Keyboard.t))=?,
++        ~onMouseDown: option(callback(ReactEvent.Mouse.t))=?,
++        ~onMouseLeave: option(callback(ReactEvent.Mouse.t))=?,
++        ~onMouseUp: option(callback(ReactEvent.Mouse.t))=?,
++        ~onTouchEnd: option(callback(ReactEvent.Touch.t))=?,
++        ~onTouchMove: option(callback(ReactEvent.Touch.t))=?,
++        ~onTouchStart: option(callback(ReactEvent.Touch.t))=?,
+         ~role: option(string)=?,
+         ~tabIndex: option([ | `Int(int) | `Float(float) | `String(string)])=?,
+         ~_TouchRippleProps: option(Js.t({..}))=?,
+@@ -7481,9 +7483,9 @@ module StepContent = {
+          );
+   };
+   [@bs.module "material-ui/Stepper/StepContent"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~active: bool=?,
+       ~alternativeLabel: bool=?,
+@@ -7588,9 +7590,9 @@ module StepIcon = {
+          );
+   };
+   [@bs.module "material-ui/Stepper/StepIcon"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~active: bool=?,
+       ~completed: bool=?,
+@@ -7695,9 +7697,9 @@ module StepLabel = {
+          );
+   };
+   [@bs.module "material-ui/Stepper/StepLabel"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~active: bool=?,
+       ~alternativeLabel: bool=?,
+@@ -7791,9 +7793,9 @@ module Step = {
+          );
+   };
+   [@bs.module "material-ui/Stepper/Step"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~active: bool=?,
+       ~alternativeLabel: bool=?,
+@@ -7884,9 +7886,9 @@ module Stepper = {
+          );
+   };
+   [@bs.module "material-ui/Stepper/Stepper"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~activeStep: 'number_2=?,
+       ~alternativeLabel: bool=?,
+@@ -7988,9 +7990,9 @@ module SvgIcon = {
+          );
+   };
+   [@bs.module "material-ui/SvgIcon/SvgIcon"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~className: string=?,
+       ~color: string=?,
+@@ -8051,9 +8053,9 @@ module SwipeableDrawer = {
+     | [@bs.as "temporary"] `Temporary
+   ];
+   [@bs.module "material-ui/SwipeableDrawer/SwipeableDrawer"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~anchor: string=?,
+       ~disableBackdropTransition: bool=?,
+@@ -8194,9 +8196,9 @@ module Switch = {
+          );
+   };
+   [@bs.module "material-ui/Switch/Switch"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~checked: 'union_v=?,
+       ~checkedIcon: ReasonReact.reactElement=?,
+@@ -8209,7 +8211,7 @@ module Switch = {
+       ~id: string=?,
+       ~inputProps: Js.t({..})=?,
+       ~inputRef: ReasonReact.reactElement=?,
+-      ~onChange: ReasonReact.Callback.t(ReactEventRe.Form.t)=?,
++      ~onChange: callback(ReactEvent.Form.t)=?,
+       ~_type: string=?,
+       ~value: string=?,
+       ~classes: Js.Dict.t(string)=?,
+@@ -8231,7 +8233,7 @@ module Switch = {
+         ~id: option(string)=?,
+         ~inputProps: option(Js.t({..}))=?,
+         ~inputRef: option(ReasonReact.reactElement)=?,
+-        ~onChange: option(ReasonReact.Callback.t(ReactEventRe.Form.t))=?,
++        ~onChange: option(callback(ReactEvent.Form.t))=?,
+         ~_type: option(string)=?,
+         ~value: option(string)=?,
+         ~classes: option(Classes.t)=?,
+@@ -8338,9 +8340,9 @@ module Tab = {
+          );
+   };
+   [@bs.module "material-ui/Tabs/Tab"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~className: string=?,
+       ~disabled: bool=?,
+@@ -8348,8 +8350,8 @@ module Tab = {
+       ~icon: ReasonReact.reactElement=?,
+       ~indicator: ReasonReact.reactElement=?,
+       ~label: ReasonReact.reactElement=?,
+-      ~onChange: ReasonReact.Callback.t(ReactEventRe.Form.t)=?,
+-      ~onClick: ReasonReact.Callback.t(ReactEventRe.Mouse.t)=?,
++      ~onChange: callback(ReactEvent.Form.t)=?,
++      ~onClick: callback(ReactEvent.Mouse.t)=?,
+       ~selected: bool=?,
+       ~textColor: 'union_q=?,
+       ~value: 'any_0=?,
+@@ -8358,17 +8360,17 @@ module Tab = {
+       ~component: 'union_0=?,
+       ~disableRipple: bool=?,
+       ~focusRipple: bool=?,
+-      ~onBlur: ReasonReact.Callback.t(ReactEventRe.Focus.t)=?,
+-      ~onFocus: ReasonReact.Callback.t(ReactEventRe.Focus.t)=?,
+-      ~onKeyboardFocus: ReasonReact.Callback.t(ReactEventRe.Focus.t)=?,
+-      ~onKeyDown: ReasonReact.Callback.t(ReactEventRe.Keyboard.t)=?,
+-      ~onKeyUp: ReasonReact.Callback.t(ReactEventRe.Keyboard.t)=?,
+-      ~onMouseDown: ReasonReact.Callback.t(ReactEventRe.Mouse.t)=?,
+-      ~onMouseLeave: ReasonReact.Callback.t(ReactEventRe.Mouse.t)=?,
+-      ~onMouseUp: ReasonReact.Callback.t(ReactEventRe.Mouse.t)=?,
+-      ~onTouchEnd: ReasonReact.Callback.t(ReactEventRe.Touch.t)=?,
+-      ~onTouchMove: ReasonReact.Callback.t(ReactEventRe.Touch.t)=?,
+-      ~onTouchStart: ReasonReact.Callback.t(ReactEventRe.Touch.t)=?,
++      ~onBlur: callback(ReactEvent.Form.t)=?,
++      ~onFocus: callback(ReactEvent.Form.t)=?,
++      ~onKeyboardFocus: callback(ReactEvent.Form.t)=?,
++      ~onKeyDown: callback(ReactEvent.Keyboard.t)=?,
++      ~onKeyUp: callback(ReactEvent.Keyboard.t)=?,
++      ~onMouseDown: callback(ReactEvent.Mouse.t)=?,
++      ~onMouseLeave: callback(ReactEvent.Mouse.t)=?,
++      ~onMouseUp: callback(ReactEvent.Mouse.t)=?,
++      ~onTouchEnd: callback(ReactEvent.Touch.t)=?,
++      ~onTouchMove: callback(ReactEvent.Touch.t)=?,
++      ~onTouchStart: callback(ReactEvent.Touch.t)=?,
+       ~role: string=?,
+       ~tabIndex: 'union_o=?,
+       ~_TouchRippleProps: Js.t({..})=?,
+@@ -8387,8 +8389,8 @@ module Tab = {
+         ~icon: option(ReasonReact.reactElement)=?,
+         ~indicator: option(ReasonReact.reactElement)=?,
+         ~label: option(ReasonReact.reactElement)=?,
+-        ~onChange: option(ReasonReact.Callback.t(ReactEventRe.Form.t))=?,
+-        ~onClick: option(ReasonReact.Callback.t(ReactEventRe.Mouse.t))=?,
++        ~onChange: option(callback(ReactEvent.Form.t))=?,
++        ~onClick: option(callback(ReactEvent.Mouse.t))=?,
+         ~selected: option(bool)=?,
+         ~textColor: option([ | `String(string) | `Enum(textColor)])=?,
+         ~value: option('any_0)=?,
+@@ -8398,18 +8400,18 @@ module Tab = {
+            option([ | `String(string) | `Element(ReasonReact.reactElement)])=?,
+         ~disableRipple: option(bool)=?,
+         ~focusRipple: option(bool)=?,
+-        ~onBlur: option(ReasonReact.Callback.t(ReactEventRe.Focus.t))=?,
+-        ~onFocus: option(ReasonReact.Callback.t(ReactEventRe.Focus.t))=?,
++        ~onBlur: option(callback(ReactEvent.Form.t))=?,
++        ~onFocus: option(callback(ReactEvent.Form.t))=?,
+         ~onKeyboardFocus:
+-           option(ReasonReact.Callback.t(ReactEventRe.Focus.t))=?,
+-        ~onKeyDown: option(ReasonReact.Callback.t(ReactEventRe.Keyboard.t))=?,
+-        ~onKeyUp: option(ReasonReact.Callback.t(ReactEventRe.Keyboard.t))=?,
+-        ~onMouseDown: option(ReasonReact.Callback.t(ReactEventRe.Mouse.t))=?,
+-        ~onMouseLeave: option(ReasonReact.Callback.t(ReactEventRe.Mouse.t))=?,
+-        ~onMouseUp: option(ReasonReact.Callback.t(ReactEventRe.Mouse.t))=?,
+-        ~onTouchEnd: option(ReasonReact.Callback.t(ReactEventRe.Touch.t))=?,
+-        ~onTouchMove: option(ReasonReact.Callback.t(ReactEventRe.Touch.t))=?,
+-        ~onTouchStart: option(ReasonReact.Callback.t(ReactEventRe.Touch.t))=?,
++           option(callback(ReactEvent.Form.t))=?,
++        ~onKeyDown: option(callback(ReactEvent.Keyboard.t))=?,
++        ~onKeyUp: option(callback(ReactEvent.Keyboard.t))=?,
++        ~onMouseDown: option(callback(ReactEvent.Mouse.t))=?,
++        ~onMouseLeave: option(callback(ReactEvent.Mouse.t))=?,
++        ~onMouseUp: option(callback(ReactEvent.Mouse.t))=?,
++        ~onTouchEnd: option(callback(ReactEvent.Touch.t))=?,
++        ~onTouchMove: option(callback(ReactEvent.Touch.t))=?,
++        ~onTouchStart: option(callback(ReactEvent.Touch.t))=?,
+         ~role: option(string)=?,
+         ~tabIndex: option([ | `Int(int) | `Float(float) | `String(string)])=?,
+         ~_TouchRippleProps: option(Js.t({..}))=?,
+@@ -8471,9 +8473,9 @@ module Tab = {
+ 
+ module TableBody = {
+   [@bs.module "material-ui/Table/TableBody"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~className: string=?,
+       ~component: 'union_z=?,
+@@ -8566,9 +8568,9 @@ module TableCell = {
+          );
+   };
+   [@bs.module "material-ui/Table/TableCell"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~className: string=?,
+       ~component: 'union_s=?,
+@@ -8622,9 +8624,9 @@ module TableCell = {
+ 
+ module TableFooter = {
+   [@bs.module "material-ui/Table/TableFooter"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (~component: 'union_m=?, ~style: ReactDOMRe.style=?, unit) => _ =
+     "";
+   let make =
+@@ -8648,9 +8650,9 @@ module TableFooter = {
+ 
+ module TableHead = {
+   [@bs.module "material-ui/Table/TableHead"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~className: string=?,
+       ~component: 'union_l=?,
+@@ -8746,9 +8748,9 @@ module TablePagination = {
+          );
+   };
+   [@bs.module "material-ui/Table/TablePagination"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~_Actions: 'union_r=?,
+       ~backIconButtonProps: Js.t({..})=?,
+@@ -8765,8 +8767,8 @@ module TablePagination = {
+                              =?,
+       ~labelRowsPerPage: ReasonReact.reactElement=?,
+       ~nextIconButtonProps: Js.t({..})=?,
+-      ~onChangePage: (Js.Nullable.t(ReactEventRe.Synthetic.t), int) => unit,
+-      ~onChangeRowsPerPage: ReactEventRe.Form.t => unit=?,
++      ~onChangePage: (Js.Nullable.t(ReactEvent.Synthetic.t), int) => unit,
++      ~onChangeRowsPerPage: ReactEvent.Form.t => unit=?,
+       ~page: 'number_8,
+       ~rowsPerPage: 'number_f,
+       ~rowsPerPageOptions: 'arrayGeneric_m=?,
+@@ -8804,8 +8806,8 @@ module TablePagination = {
+            )=?,
+         ~labelRowsPerPage: option(ReasonReact.reactElement)=?,
+         ~nextIconButtonProps: option(Js.t({..}))=?,
+-        ~onChangePage: (Js.Nullable.t(ReactEventRe.Synthetic.t), int) => unit,
+-        ~onChangeRowsPerPage: option(ReactEventRe.Form.t => unit)=?,
++        ~onChangePage: (Js.Nullable.t(ReactEvent.Synthetic.t), int) => unit,
++        ~onChangeRowsPerPage: option(ReactEvent.Form.t => unit)=?,
+         ~page: [ | `Int(int) | `Float(float)],
+         ~rowsPerPage: [ | `Int(int) | `Float(float)],
+         ~rowsPerPageOptions: option(array(int))=?,
+@@ -8888,15 +8890,15 @@ module TableRow = {
+          );
+   };
+   [@bs.module "material-ui/Table/TableRow"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~className: string=?,
+       ~component: 'union_m=?,
+       ~hover: bool=?,
+       ~selected: bool=?,
+-      ~onDoubleClick: ReasonReact.Callback.t(ReactEventRe.Mouse.t)=?,
++      ~onDoubleClick: callback(ReactEvent.Mouse.t)=?,
+       ~classes: Js.Dict.t(string)=?,
+       ~style: ReactDOMRe.style=?,
+       unit
+@@ -8910,7 +8912,7 @@ module TableRow = {
+            option([ | `String(string) | `Element(ReasonReact.reactElement)])=?,
+         ~hover: option(bool)=?,
+         ~selected: option(bool)=?,
+-        ~onDoubleClick: option(ReasonReact.Callback.t(ReactEventRe.Mouse.t))=?,
++        ~onDoubleClick: option(callback(ReactEvent.Mouse.t))=?,
+         ~classes: option(Classes.t)=?,
+         ~style: option(ReactDOMRe.style)=?,
+         children,
+@@ -8969,9 +8971,9 @@ module TableSortLabel = {
+          );
+   };
+   [@bs.module "material-ui/Table/TableSortLabel"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~active: bool=?,
+       ~className: string=?,
+@@ -8982,18 +8984,18 @@ module TableSortLabel = {
+       ~disabled: bool=?,
+       ~disableRipple: bool=?,
+       ~focusRipple: bool=?,
+-      ~onBlur: ReasonReact.Callback.t(ReactEventRe.Focus.t)=?,
+-      ~onClick: ReasonReact.Callback.t(ReactEventRe.Mouse.t)=?,
+-      ~onFocus: ReasonReact.Callback.t(ReactEventRe.Focus.t)=?,
+-      ~onKeyboardFocus: ReasonReact.Callback.t(ReactEventRe.Focus.t)=?,
+-      ~onKeyDown: ReasonReact.Callback.t(ReactEventRe.Keyboard.t)=?,
+-      ~onKeyUp: ReasonReact.Callback.t(ReactEventRe.Keyboard.t)=?,
+-      ~onMouseDown: ReasonReact.Callback.t(ReactEventRe.Mouse.t)=?,
+-      ~onMouseLeave: ReasonReact.Callback.t(ReactEventRe.Mouse.t)=?,
+-      ~onMouseUp: ReasonReact.Callback.t(ReactEventRe.Mouse.t)=?,
+-      ~onTouchEnd: ReasonReact.Callback.t(ReactEventRe.Touch.t)=?,
+-      ~onTouchMove: ReasonReact.Callback.t(ReactEventRe.Touch.t)=?,
+-      ~onTouchStart: ReasonReact.Callback.t(ReactEventRe.Touch.t)=?,
++      ~onBlur: callback(ReactEvent.Form.t)=?,
++      ~onClick: callback(ReactEvent.Mouse.t)=?,
++      ~onFocus: callback(ReactEvent.Form.t)=?,
++      ~onKeyboardFocus: callback(ReactEvent.Form.t)=?,
++      ~onKeyDown: callback(ReactEvent.Keyboard.t)=?,
++      ~onKeyUp: callback(ReactEvent.Keyboard.t)=?,
++      ~onMouseDown: callback(ReactEvent.Mouse.t)=?,
++      ~onMouseLeave: callback(ReactEvent.Mouse.t)=?,
++      ~onMouseUp: callback(ReactEvent.Mouse.t)=?,
++      ~onTouchEnd: callback(ReactEvent.Touch.t)=?,
++      ~onTouchMove: callback(ReactEvent.Touch.t)=?,
++      ~onTouchStart: callback(ReactEvent.Touch.t)=?,
+       ~role: string=?,
+       ~tabIndex: 'union_o=?,
+       ~_TouchRippleProps: Js.t({..})=?,
+@@ -9016,19 +9018,19 @@ module TableSortLabel = {
+         ~disabled: option(bool)=?,
+         ~disableRipple: option(bool)=?,
+         ~focusRipple: option(bool)=?,
+-        ~onBlur: option(ReasonReact.Callback.t(ReactEventRe.Focus.t))=?,
+-        ~onClick: option(ReasonReact.Callback.t(ReactEventRe.Mouse.t))=?,
+-        ~onFocus: option(ReasonReact.Callback.t(ReactEventRe.Focus.t))=?,
++        ~onBlur: option(callback(ReactEvent.Form.t))=?,
++        ~onClick: option(callback(ReactEvent.Mouse.t))=?,
++        ~onFocus: option(callback(ReactEvent.Form.t))=?,
+         ~onKeyboardFocus:
+-           option(ReasonReact.Callback.t(ReactEventRe.Focus.t))=?,
+-        ~onKeyDown: option(ReasonReact.Callback.t(ReactEventRe.Keyboard.t))=?,
+-        ~onKeyUp: option(ReasonReact.Callback.t(ReactEventRe.Keyboard.t))=?,
+-        ~onMouseDown: option(ReasonReact.Callback.t(ReactEventRe.Mouse.t))=?,
+-        ~onMouseLeave: option(ReasonReact.Callback.t(ReactEventRe.Mouse.t))=?,
+-        ~onMouseUp: option(ReasonReact.Callback.t(ReactEventRe.Mouse.t))=?,
+-        ~onTouchEnd: option(ReasonReact.Callback.t(ReactEventRe.Touch.t))=?,
+-        ~onTouchMove: option(ReasonReact.Callback.t(ReactEventRe.Touch.t))=?,
+-        ~onTouchStart: option(ReasonReact.Callback.t(ReactEventRe.Touch.t))=?,
++           option(callback(ReactEvent.Form.t))=?,
++        ~onKeyDown: option(callback(ReactEvent.Keyboard.t))=?,
++        ~onKeyUp: option(callback(ReactEvent.Keyboard.t))=?,
++        ~onMouseDown: option(callback(ReactEvent.Mouse.t))=?,
++        ~onMouseLeave: option(callback(ReactEvent.Mouse.t))=?,
++        ~onMouseUp: option(callback(ReactEvent.Mouse.t))=?,
++        ~onTouchEnd: option(callback(ReactEvent.Touch.t))=?,
++        ~onTouchMove: option(callback(ReactEvent.Touch.t))=?,
++        ~onTouchStart: option(callback(ReactEvent.Touch.t))=?,
+         ~role: option(string)=?,
+         ~tabIndex: option([ | `Int(int) | `Float(float) | `String(string)])=?,
+         ~_TouchRippleProps: option(Js.t({..}))=?,
+@@ -9097,9 +9099,9 @@ module Table = {
+          );
+   };
+   [@bs.module "material-ui/Table/Table"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~className: string=?,
+       ~component: 'union_e=?,
+@@ -9196,16 +9198,16 @@ module Tabs = {
+          );
+   };
+   [@bs.module "material-ui/Tabs/Tabs"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~action: ReasonReact.reactElement=?,
+       ~centered: bool=?,
+       ~className: string=?,
+       ~fullWidth: bool=?,
+       ~indicatorColor: 'union_e=?,
+-      ~onChange: ReasonReact.Callback.t(ReactEventRe.Form.t)=?,
++      ~onChange: callback(ReactEvent.Form.t)=?,
+       ~scrollable: bool=?,
+       ~scrollButtons: string=?,
+       ~_TabScrollButton: 'union_b=?,
+@@ -9226,7 +9228,7 @@ module Tabs = {
+         ~fullWidth: option(bool)=?,
+         ~indicatorColor:
+            option([ | `String(string) | `Enum(indicatorColor)])=?,
+-        ~onChange: option(ReasonReact.Callback.t(ReactEventRe.Form.t))=?,
++        ~onChange: option(callback(ReactEvent.Form.t))=?,
+         ~scrollable: option(bool)=?,
+         ~scrollButtons: option(scrollButtons)=?,
+         ~_TabScrollButton:
+@@ -9280,9 +9282,9 @@ module TextField = {
+     | [@bs.as "normal"] `Normal
+   ];
+   [@bs.module "material-ui/TextField/TextField"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~autoComplete: string=?,
+       ~autoFocus: bool=?,
+@@ -9302,9 +9304,9 @@ module TextField = {
+       ~margin: string=?,
+       ~multiline: bool=?,
+       ~name: string=?,
+-      ~onBlur: ReasonReact.Callback.t(ReactEventRe.Focus.t)=?,
+-      ~onChange: ReasonReact.Callback.t(ReactEventRe.Form.t)=?,
+-      ~onFocus: ReasonReact.Callback.t(ReactEventRe.Focus.t)=?,
++      ~onBlur: callback(ReactEvent.Form.t)=?,
++      ~onChange: callback(ReactEvent.Form.t)=?,
++      ~onFocus: callback(ReactEvent.Form.t)=?,
+       ~placeholder: string=?,
+       ~required: bool=?,
+       ~rows: 'union_r=?,
+@@ -9340,9 +9342,9 @@ module TextField = {
+         ~margin: option(margin)=?,
+         ~multiline: option(bool)=?,
+         ~name: option(string)=?,
+-        ~onBlur: option(ReasonReact.Callback.t(ReactEventRe.Focus.t))=?,
+-        ~onChange: option(ReasonReact.Callback.t(ReactEventRe.Form.t))=?,
+-        ~onFocus: option(ReasonReact.Callback.t(ReactEventRe.Focus.t))=?,
++        ~onBlur: option(callback(ReactEvent.Form.t))=?,
++        ~onChange: option(callback(ReactEvent.Form.t))=?,
++        ~onFocus: option(callback(ReactEvent.Form.t))=?,
+         ~placeholder: option(string)=?,
+         ~required: option(bool)=?,
+         ~rows: option([ | `String(string) | `Int(int) | `Float(float)])=?,
+@@ -9434,9 +9436,9 @@ module Toolbar = {
+          );
+   };
+   [@bs.module "material-ui/Toolbar/Toolbar"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~className: string=?,
+       ~disableGutters: bool=?,
+@@ -9530,9 +9532,9 @@ module Tooltip = {
+          );
+   };
+   [@bs.module "material-ui/Tooltip/Tooltip"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~className: string=?,
+       ~disableFocusListener: bool=?,
+@@ -9731,9 +9733,9 @@ module Typography = {
+          );
+   };
+   [@bs.module "material-ui/Typography/Typography"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~align: string=?,
+       ~className: string=?,
+@@ -9794,9 +9796,9 @@ module Zoom = {
+     exit: int,
+   };
+   [@bs.module "material-ui/transitions/Zoom"]
+-  external reactClass : ReasonReact.reactClass = "default";
++  external reactClass: ReasonReact.reactClass = "default";
+   [@bs.obj]
+-  external makeProps :
++  external makeProps:
+     (
+       ~_in: bool=?,
+       ~onEnter: unit => unit=?,

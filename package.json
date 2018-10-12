@@ -1,0 +1,60 @@
+{
+  "name": "reasonml-starter",
+  "version": "0.1.0",
+  "private": false,
+  "dependencies": {
+    "bs-css": "^6.7.0",
+    "bs-material-ui": "^0.4.0",
+    "bs-material-ui-icons": "^0.1.5",
+    "bs-platform": "^4.0.5",
+    "bs-reform": "^5.1.1",
+    "bs-moment": "^0.2.1",
+    "graphql": "0.13.2",
+    "graphql-tag": "2.9.2",
+    "material-ui": "1.0.0-beta.41",
+    "material-ui-icons": "^1.0.0-beta.17",
+    "moment": "^2.20.1",
+    "numeral": "^2.0.6",
+    "prop-types": "^15.6.0",
+    "react": "^16.2.0",
+    "react-css-loaders": "^0.0.5",
+    "react-dom": "^16.2.0",
+    "reason-react": "^0.5.3"
+  },
+  "devDependencies": {
+    "@storybook/addon-actions": "^3.3.6",
+    "@storybook/addon-links": "^3.3.6",
+    "@storybook/react": "^3.3.6",
+    "bs-jest": "^0.3.0",
+    "concurrently": "^3.5.1",
+    "lint-staged": "^6.0.0",
+    "patch-package": "^5.1.1",
+    "pre-commit": "^1.2.2",
+    "prettier": "^1.9.2",
+    "react-scripts": "^1.1.1"
+    
+  },
+  "lint-staged": {
+    "*.js": [
+      "prettier --write --single-quote true --trailing-comma all --print-width 120 --semi false",
+      "git add"
+    ],
+    "*.re": [
+      "refmt --in-place",
+      "git add"
+    ]
+  },
+  "pre-commit": "lint:staged",
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "bs:build": "bsb -make-world",
+    "bs:watch": "bsb -make-world -clean-world -w",
+    "test": "yarn bs:build && react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "prepare": "patch-package",
+    "lint:staged": "lint-staged",
+    "storybook": "concurrently -k \"start-storybook --port=7007\" \"yarn bs:watch\"",
+    "build-storybook": "build-storybook"
+  }
+}
