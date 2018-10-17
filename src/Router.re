@@ -1,34 +1,29 @@
-type route = RouterActions.route;
+type routes =
+  | HomeRoute
+  | NotFoundRoute;
 
-type action =
-  | ChangeRoute(route);
+let router = DirectorRe.makeRouter({
+  "/": "home",
+  "/404": "404"
+});
 
-type state = {currentRoute: route};
-
-let component = ReasonReact.reducerComponent("Router");
-
-let pathToRoute: ReasonReact.Router.url => route =
-  ({path, hash}) =>
-    switch (path) {
-    | [] => HomeRoute
+let renderForRoute = (route) => {
+  let element =
+    switch route {
+    | HomeRoute => <Home message="Welcome to Astrocoders ReasonML starter"/>
+    | NotFoundRoute => <NotFound />
     };
-
-let make = _children => {
-  ...component,
-  initialState: () => {
-    currentRoute: pathToRoute(ReasonReact.Router.dangerouslyGetInitialUrl()),
-  },
-  reducer: (action, _state) =>
-    switch (action) {
-    | ChangeRoute(route) => ReasonReact.Update({currentRoute: route})
-    },
-  didMount: self =>
-    ReasonReact.Router.watchUrl(url =>
-      self.send(ChangeRoute(pathToRoute(url)))
-    )
-    |> (value => self.onUnmount(() => ReasonReact.Router.unwatchUrl(value))),
-  render: self =>
-    switch (self.state.currentRoute) {
-    | HomeRoute => <Home message="Astrocoders ReasonML Starter" />
-    },
+  ReactDOMRe.renderToElementWithId(element, "root")
 };
+
+let handlers = {
+  "home": () => renderForRoute(HomeRoute),
+  "404": () => renderForRoute(NotFoundRoute)
+};
+
+DirectorRe.configure(router, {
+  "html5history": true,
+  "resource": handlers
+});
+
+let init = () => DirectorRe.init(router, "/");

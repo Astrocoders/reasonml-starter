@@ -1,14 +1,7 @@
 [%bs.raw {|require('./index.css')|}];
 
-[@bs.module "./App.js"] external app : ReasonReact.reactClass = "default";
+[@bs.module "./registerServiceWorker"] external register_service_worker : unit => unit = "default";
 
-module App = {
-  let make = children =>
-    ReasonReact.wrapJsForReason(
-      ~reactClass=app,
-      ~props=Js.Obj.empty(),
-      children,
-    );
-};
+Router.init();
 
-ReactDOMRe.renderToElementWithId(<App> <Router /> </App>, "root");
+register_service_worker();
