@@ -2203,6 +2203,13 @@ bs-css@^6.7.0:
   dependencies:
     glamor "^2.0.0"
 
+bs-director@^0.0.6:
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/bs-director/-/bs-director-0.0.6.tgz#b09f2243d1963242ee0a3ed7a5d8dd5886b37d6d"
+  integrity sha512-AHuD1aoipRoBi/gC8v7Xpq3odo+MUGy7eoWAOJoWvjWwERenIxkhMzgUxngcreo+pgXJiBEd4raZPpCRyN9uyw==
+  dependencies:
+    director "^1.2.8"
+
 bs-jest@^0.3.0:
   version "0.3.2"
   resolved "https://registry.yarnpkg.com/bs-jest/-/bs-jest-0.3.2.tgz#b13cef06a965988a404fd74cac351f3b5bce53b1"
@@ -3399,6 +3406,11 @@ diffie-hellman@^5.0.0:
     bn.js "^4.1.0"
     miller-rabin "^4.0.0"
     randombytes "^2.0.0"
+
+director@^1.2.8:
+  version "1.2.8"
+  resolved "https://registry.yarnpkg.com/director/-/director-1.2.8.tgz#c6d9b4dd890e9aff5365183fe9cc8e73994cf2d5"
+  integrity sha1-xtm03YkOmv9TZRg/6cyOc5lM8tU=
 
 dns-equal@^1.0.0:
   version "1.0.0"
@@ -9239,6 +9251,11 @@ redux@^3.7.2:
     lodash-es "^4.2.1"
     loose-envify "^1.1.0"
     symbol-observable "^1.0.3"
+
+refmt@^1.13.7-1:
+  version "1.13.7-1"
+  resolved "https://registry.yarnpkg.com/refmt/-/refmt-1.13.7-1.tgz#c3159bcaf23b20cf2dc86cb161570792f62d1481"
+  integrity sha512-fJbHIhRMUjKbnm6tjvExL9cTrjvYgAose+G4aDPJGSCbTaQbPUu/JINRqUUaotAJtXVzqdcLhlNqrCmVfUNqFg==
 
 regenerate@^1.2.1:
   version "1.4.0"

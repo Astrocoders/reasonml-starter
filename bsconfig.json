@@ -12,6 +12,7 @@
   "bs-dependencies": [
     "reason-react",
     "bs-css",
+    "bs-director",
     "bs-reform",
     "bs-jest",
     "bs-material-ui",
